@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pago Seguro | Tiempo de Refrigerio</title>
+    <link rel="stylesheet" href="assets/css/estilos.css">
+    <style>
+        /* ========== ESTILOS PREMIUM – SECCIÓN DE PAGO ========== */
+
+        /* NUEVO WRAPPER QUE ENVUELVE TODO EL BLOQUE DE PAGO */
+        .pago-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #fff8f0, #fff3e5, #fef0dd, #fff5ea);
+            background-size: 400% 400%;
+            animation: fondoMovimiento 15s ease infinite;
+            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #fce4cc;
+            margin-bottom: 20px; /* separación con el footer */
+        }
+
+        @keyframes fondoMovimiento {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Contenedor de burbujas (ahora dentro del wrapper) */
+        .burbujas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .burbuja {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            opacity: 0.15;
+            animation: flotar 8s infinite ease-in-out;
+            user-select: none;
+        }
+
+        @keyframes flotar {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.12; }
+            50% { transform: translateY(-30px) rotate(8deg); opacity: 0.2; }
+            100% { transform: translateY(0px) rotate(0deg); opacity: 0.12; }
+        }
+
+        /* Ajustamos el padding interno del wrapper para que el contenido no quede pegado */
+        .pago-wrapper-inner {
+            position: relative;
+            z-index: 1;
+            padding: 32px 28px;
+        }
+
+        /* El pago-header-ui se mantiene igual */
+        .pago-header-ui {
+            margin-bottom: 20px;
+        }
+
+        /* El pago-box ahora no necesita fondo propio, será transparente */
+        .pago-box {
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        /* Acordeón maestro (encima del fondo) */
+        .acordeon-maestro {
+            background: #fefcf8;
+            border: 2px solid #ffddb0;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .maestro-titulo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 24px;
+            cursor: pointer;
+            user-select: none;
+            background: linear-gradient(145deg, #fff6ed 0%, #ffe9d4 100%);
+            border-bottom: 1px solid transparent;
+            transition: background 0.2s;
+        }
+        .maestro-titulo:hover {
+            background: linear-gradient(145deg, #ffefdd, #ffdfc0);
+        }
+        .acordeon-maestro.abierto .maestro-titulo {
+            border-bottom: 1px solid #ffddb0;
+        }
+        .maestro-titulo h4 {
+            margin: 0;
+            color: #c24e00;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+            flex: 1;
+        }
+        .badge-detalle {
+            font-size: 10px;
+            background: #ffba7a;
+            color: #fff;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 6px rgba(255,140,0,0.3);
+            margin-right: 8px;
+        }
+        .toggle-icon {
+            font-size: 18px;
+            color: #c24e00;
+            transition: transform 0.3s ease;
+        }
+        .acordeon-maestro.abierto .toggle-icon {
+            transform: rotate(180deg);
+        }
+        .maestro-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #fffaf5;
+        }
+        .acordeon-maestro.abierto .maestro-content {
+            max-height: 1200px;
+        }
+        .maestro-content-inner {
+            padding: 20px 24px;
+        }
+
+        /* Sub-secciones */
+        .sub-seccion { margin-bottom: 20px; }
+        .sub-seccion-titulo {
+            font-size: 14px;
+            font-weight: 700;
+            color: #b85a00;
+            margin-bottom: 12px;
+            border-left: 4px solid #ff8c00;
+            padding-left: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .final-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 2px dashed #ffbc7a;
+            font-weight: 700;
+            font-size: 16px;
+            color: #3e2f1f;
+        }
+        .final-total span:first-child {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #a0612b;
+            background: rgba(255,255,255,0.5);
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        #pagoTotalFinal {
+            font-size: 26px;
+            font-weight: 800;
+            color: #cc5500;
+            background: linear-gradient(135deg, #fff7ec, #ffe3c2);
+            padding: 8px 24px;
+            border-radius: 40px;
+            box-shadow: 0 4px 10px rgba(204,85,0,0.15);
+            letter-spacing: -0.2px;
+        }
+
+        .detalle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 14px;
+            border: 1px solid #ffe0c0;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            transition: all 0.2s ease;
+        }
+        .detalle-item:hover {
+            background: #fffbf5;
+            border-color: #ffb366;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(255,140,0,0.1);
+        }
+
+        .payment-option {
+            background: #ffffff;
+            border: 2px solid #ffe0c0;
+            border-radius: 16px;
+            padding: 20px 18px;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
+        }
+        .payment-option::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,140,0,0.05), transparent);
+            transition: left 0.5s ease;
+        }
+        .payment-option:hover::after { left: 100%; }
+        .payment-option:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(255, 140, 0, 0.12);
+            border-color: #ff9f3c;
+            background: #fff8f0;
+        }
+        .payment-option.active {
+            background: #fff2e0;
+            border-color: #ff7b00;
+            box-shadow: 0 0 0 5px rgba(255, 140, 0, 0.2);
+            transform: scale(1.01);
+        }
+        .payment-option .logos-wrapper {
+            margin-top: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .payment-badge {
+            background: #fff3e0;
+            color: #b85a00;
+            border-radius: 30px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid #ffc184;
+            box-shadow: 0 2px 6px rgba(255,140,0,0.1);
+            transition: all 0.2s;
+        }
+        .payment-badge:hover {
+            background: #ffddb0;
+            border-color: #ff9f3c;
+            transform: translateY(-1px);
+        }
+        .payment-badge svg {
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+        }
+
+        .btn-confirmar-pago {
+            background: linear-gradient(135deg, #ff6a00, #ff8c00);
+            color: #fff;
+            padding: 18px 28px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            box-shadow: 0 10px 22px rgba(255, 106, 0, 0.3), 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: none;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-confirmar-pago::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        .btn-confirmar-pago:hover::before { left: 100%; }
+        .btn-confirmar-pago:hover {
+            background: linear-gradient(135deg, #e65c00, #ff7b00);
+            box-shadow: 0 14px 28px rgba(230, 92, 0, 0.4);
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 600px) {
+            .pago-wrapper-inner { padding: 20px; }
+            #pagoTotalFinal { font-size: 22px; padding: 6px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header-top">
+        <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
+        <a href="index.html" class="logo-container">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+        </a>
+        <div class="search-box">
+            <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
+            <button onclick="buscarSitio()">🔍 Buscar</button>
+        </div>
+    </header>
+
+    <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
+    <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
+        <div class="offcanvas-header">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="offcanvas-title">Menú Principal</div>
+            <button class="offcanvas-btn" onclick="window.location.href='index.html'">🏠 INICIO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='menu.html'">📋 MENÚ</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pedidos.html'">🛒 PEDIDOS</button>
+            <button class="offcanvas-btn active" onclick="window.location.href='pago.html'">💳 MÉTODOS DE PAGO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='horarios.html'">⏰ HORARIOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='contactanos.html'">📞 CONTÁCTANOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='trabaja.html'">💼 TRABAJA CON NOSOTROS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='chat.html'">💬 CHAT EN LÍNEA</button>
+            <button class="offcanvas-btn" onclick="window.location.href='nosotros.html'">👥 QUIÉNES SOMOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='registrate.html'">📝 REGÍSTRATE</button>
+            <button class="offcanvas-btn" onclick="window.location.href='ayuda.html'">❓ AYUDA</button>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+        <aside>
+            <button class="btn-toggle-buzon" onclick="toggleBuzon()">ABRIR BUZÓN DE OPINIONES ⭐</button>
+            <div class="buzon-card" id="miBuzon">
+                <div class="buzon-header"> CALIFICA TU EXPERIENCIA <span onclick="toggleBuzon()" style="cursor:pointer">✖</span> </div>
+                <div class="encuesta-body">
+                    <div id="preguntas-contenedor"></div>
+                    <textarea id="opinionTexto" placeholder="Déjanos tus comentarios adicionales aquí..."></textarea>
+                    <button class="btn-enviar" onclick="enviarEncuesta()">ENVIAR CALIFICACIÓN 🚀</button>
+                </div>
+            </div>
+
+            <div class="cart-card" id="cartCard" style="display: block;">
+                <div class="cart-header">🛒 RESUMEN DE TU PEDIDO</div>
+                <div class="cart-body">
+                    <div class="cart-item"><div class="item-info"><span class="item-name">Empanada (Carne/Pollo)</span><span class="item-price">$3.000 c/u</span></div><div class="cart-controls"><button class="cart-btn-qty" onclick="changeQty('Empanadas', -1)">−</button><span class="cart-qty-num" id="qty-Empanadas">0</span><button class="cart-btn-qty" onclick="changeQty('Empanadas', 1)">+</button></div></div>
+                    <div class="cart-item"><div class="item-info"><span class="item-name">Arepa de Huevo</span><span class="item-price">$4.000 c/u</span></div><div class="cart-controls"><button class="cart-btn-qty" onclick="changeQty('Arepa', -1)">−</button><span class="cart-qty-num" id="qty-Arepa">0</span><button class="cart-btn-qty" onclick="changeQty('Arepa', 1)">+</button></div></div>
+                    <div class="cart-item"><div class="item-info"><span class="item-name">Pastel de Yuca</span><span class="item-price">$3.500 c/u</span></div><div class="cart-controls"><button class="cart-btn-qty" onclick="changeQty('Pastel', -1)">−</button><span class="cart-qty-num" id="qty-Pastel">0</span><button class="cart-btn-qty" onclick="changeQty('Pastel', 1)">+</button></div></div>
+                    <div class="cart-item"><div class="item-info"><span class="item-name">Buñuelo</span><span class="item-price">$2.000 c/u</span></div><div class="cart-controls"><button class="cart-btn-qty" onclick="changeQty('Buñuelo', -1)">−</button><span class="cart-qty-num" id="qty-Buñuelo">0</span><button class="cart-btn-qty" onclick="changeQty('Buñuelo', 1)">+</button></div></div>
+                    <div class="cart-item"><div class="item-info"><span class="item-name">Avena Helada</span><span class="item-price">$4.500 c/u</span></div><div class="cart-controls"><button class="cart-btn-qty" onclick="changeQty('Avena', -1)">−</button><span class="cart-qty-num" id="qty-Avena">0</span><button class="cart-btn-qty" onclick="changeQty('Avena', 1)">+</button></div></div>
+                    <div class="cart-item"><div class="item-info"><span class="item-name">Tinto / Perico</span><span class="item-price">$2.000 c/u</span></div><div class="cart-controls"><button class="cart-btn-qty" onclick="changeQty('Tinto', -1)">−</button><span class="cart-qty-num" id="qty-Tinto">0</span><button class="cart-btn-qty" onclick="changeQty('Tinto', 1)">+</button></div></div>
+                    <div class="cart-item"><div class="item-info"><span class="item-name">Gaseosa</span><span class="item-price">$3.000 c/u</span></div><div class="cart-controls"><button class="cart-btn-qty" onclick="changeQty('Gaseosa', -1)">−</button><span class="cart-qty-num" id="qty-Gaseosa">0</span><button class="cart-btn-qty" onclick="changeQty('Gaseosa', 1)">+</button></div></div>
+                    <div class="cart-item"><div class="item-info"><span class="item-name">Combo Tiempo de Refrigerio</span><span class="item-price">$6.000 c/u</span></div><div class="cart-controls"><button class="cart-btn-qty" onclick="changeQty('Combo', -1)">−</button><span class="cart-qty-num" id="qty-Combo">0</span><button class="cart-btn-qty" onclick="changeQty('Combo', 1)">+</button></div></div>
+                </div>
+                <div class="cart-total-footer">
+                    <div class="cart-total-val">$ <span id="cart-total-amount">0</span></div>
+                    <button class="btn-checkout-wa" onclick="enviarWhatsApp()">PEDIR POR WHATSAPP ✅</button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content-center">
+            <!-- NUEVO WRAPPER QUE ENGLOBA PAGO SEGURO + ACORDEÓN -->
+            <div class="pago-wrapper">
+                <!-- Burbujas dentro del wrapper, ocupando todo el fondo -->
+                <div class="burbujas-container" id="burbujasContainer"></div>
+
+                <div class="pago-wrapper-inner">
+                    <div class="pago-header-ui">
+                        <h2 style="color: var(--dark); margin:0;">PAGO SEGURO</h2>
+                        <span class="badge-ssl">🔒 SSL 256-BIT ENCRYPTED</span>
+                    </div>
+
+                    <div class="pago-box" id="seccion-metodos-pago">
+                        <!-- ========== ACORDEÓN MAESTRO ÚNICO ========== -->
+                        <div class="acordeon-maestro abierto" id="acordeonMaestro">
+                            <div class="maestro-titulo" onclick="toggleMaestro()">
+                                <span style="font-size: 22px;">🧾</span>
+                                <h4>Resumen de tu compra y método de pago</h4>
+                                <span class="badge-detalle">DETALLE</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                            <div class="maestro-content">
+                                <div class="maestro-content-inner">
+                                    <!-- Sub-sección Resumen de compra -->
+                                    <div class="sub-seccion">
+                                        <div class="sub-seccion-titulo">
+                                            <span>📋</span> Productos seleccionados
+                                        </div>
+                                        <div id="detallePagoItems">
+                                            <p style="color: #b0a090; text-align:center; padding:16px 20px; font-style: italic; font-size: 13px;">Elige productos en el carrito para ver el detalle.</p>
+                                        </div>
+                                        <div class="final-total">
+                                            <span>TOTAL A PAGAR</span>
+                                            <span id="pagoTotalFinal">$ 0</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Sub-sección Método de pago -->
+                                    <div class="sub-seccion">
+                                        <div class="sub-seccion-titulo">
+                                            <span>💳</span> Método de pago
+                                        </div>
+                                        <div class="payment-grid">
+                                            <div class="payment-option" onclick="seleccionarPago(this, 'Digital')">
+                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                    <span style="font-size: 20px;">📱</span><span>Transferencia Digital</span>
+                                                </div>
+                                                <div class="logos-wrapper">
+                                                    <span class="payment-badge">
+                                                        <svg width="20" height="20" viewBox="0 0 30 30"><circle cx="15" cy="15" r="15" fill="#7B2D8B"/><text x="15" y="22" font-family="Arial, sans-serif" font-weight="900" font-size="20" fill="white" text-anchor="middle">N</text></svg>
+                                                        Nequi
+                                                    </span>
+                                                    <span class="payment-badge">
+                                                        <svg width="20" height="20" viewBox="0 0 30 30"><rect width="30" height="30" rx="6" fill="#E60000"/><text x="15" y="22" font-family="Arial, sans-serif" font-weight="900" font-size="14" fill="white" text-anchor="middle">Dp</text></svg>
+                                                        Daviplata
+                                                    </span>
+                                                    <span class="payment-badge">
+                                                        <svg width="20" height="20" viewBox="0 0 30 30"><circle cx="15" cy="15" r="15" fill="#00A85A"/><text x="15" y="22" font-family="Arial, sans-serif" font-weight="900" font-size="14" fill="white" text-anchor="middle">PSE</text></svg>
+                                                        PSE
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="payment-option" onclick="seleccionarPago(this, 'Tarjeta')">
+                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                    <span style="font-size: 20px;">💳</span><span>Tarjeta Débito / Crédito</span>
+                                                </div>
+                                                <div class="logos-wrapper">
+                                                    <span class="payment-badge">
+                                                        <svg width="48" height="20" viewBox="0 0 48 20"><rect width="48" height="20" rx="3" fill="#1A1F71"/><text x="24" y="15" font-family="Arial, sans-serif" font-weight="900" font-size="12" fill="white" text-anchor="middle">VISA</text></svg>
+                                                        Visa
+                                                    </span>
+                                                    <span class="payment-badge">
+                                                        <svg width="48" height="20" viewBox="0 0 48 20"><circle cx="12" cy="10" r="9" fill="#EB001B"/><circle cx="36" cy="10" r="9" fill="#F79E1B"/><text x="24" y="15" font-family="Arial, sans-serif" font-weight="900" font-size="8" fill="white" text-anchor="middle">Mastercard</text></svg>
+                                                        Mastercard
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="payment-option" onclick="seleccionarPago(this, 'Efectivo')">
+                                                <div style="display: flex; align-items: center; gap: 10px;">
+                                                    <span style="font-size: 20px;">💵</span><span>Efectivo contra entrega</span>
+                                                </div>
+                                                <div class="logos-wrapper">
+                                                    <span class="payment-badge">
+                                                        <svg width="22" height="22" viewBox="0 0 30 30"><circle cx="15" cy="15" r="15" fill="#388E3C"/><text x="15" y="23" font-family="Arial, sans-serif" font-weight="900" font-size="18" fill="white" text-anchor="middle">$</text></svg>
+                                                        Pagar al recibir
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input type="hidden" id="metodoSeleccionadoVal" value="">
+                                        <button class="btn-confirmar-pago" onclick="procesarPedido()">🚀 CONFIRMAR PEDIDO</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ========== FIN ACORDEÓN MAESTRO ========== -->
+                    </div>
+                </div>
+            </div>
+            <!-- FIN PAGO-WRAPPER -->
+        </main>
+
+        <aside>
+            <div class="side-card">
+                <h3>Acceso Clientes</h3>
+                <div class="login-form">
+                    <label>Usuario</label>
+                    <input type="text" id="userInput" placeholder="Usuario o Correo">
+                    <label>Contraseña</label>
+                    <input type="password" id="passInput" placeholder="Contraseña">
+                    <button class="btn-login" onclick="manejarLogin()">INICIAR SESIÓN</button>
+                    <div class="login-links">
+                        <a onclick="abrirModalRecuperar('pass')">Olvido su contraseña</a>
+                        <a onclick="abrirModalRecuperar('user')">Olvido su usuario</a>
+                        <a href="registrate.html">Regístrate</a>
+                    </div>
+                </div>
+            </div>
+            <div class="side-card">
+                <h3>Síguenos</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" title="Síguenos en Facebook"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="FB"></a>
+                    <a href="https://www.instagram.com" target="_blank" title="Síguenos en Instagram"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="IG"></a>
+                    <a href="https://www.tiktok.com" target="_blank" title="Síguenos en TikTok"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TK"></a>
+                    <a href="https://wa.me/573138205720" target="_blank" title="Escríbenos al WhatsApp"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA"></a>
+                </div>
+                <div class="map-container" style="margin-top: 15px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3977.0123!2d-74.1956!3d4.6097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMzYnMzQuOSJOIDc0wrAxMSc0NC4yIlc!5e0!3m2!1ses!2sco!4v1614123456789!5m2!1ses!2sco" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="ubicacion-llamativa">
+                    <strong>📍 ¡VISÍTANOS EN NUESTRA SEDE PRINCIPAL!</strong>
+                    <p>CL 56 G NO 90B 59 SUR <br> Bosa, Bogotá</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- MODALES (SIN CAMBIOS) -->
+    <div class="modal-overlay" id="modalGracias">
+        <div class="modal-box">
+            <div class="chulito-circular">✔</div>
+            <h2>¡Gracias por tu mensaje!</h2>
+            <p style="color: #666; font-size: 14px; margin-bottom: 25px;">Tu opinión es fundamental para seguir brindándote lo mejor de nuestra tradición.</p>
+            <button class="btn-modal-blue" onclick="location.reload()">GENERAR OTRA ENCUESTA</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalGracias')">CERRAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalConfirmado">
+        <div class="modal-box">
+            <div class="chulito-circular">✔</div>
+            <h2>¡Pedido Confirmado!</h2>
+            <p>Estamos preparando tu refrigerio. Estará en tu puerta en 30-45 minutos.</p>
+            <button class="btn-modal-blue" onclick="location.href='index.html'">FINALIZAR</button>
+            <button class="btn-modal-gray" onclick="resetearPedidoCompleto()">REGRESAR A REALIZAR OTRA COMPRA</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalBienvenida">
+        <div class="modal-box modal-vip">
+            <span class="vip-crown">👑</span>
+            <h2 id="tituloVIP">ACCESO EXCLUSIVO</h2>
+            <p id="msgBienvenida">Es un honor tenerte de vuelta.</p>
+            <div style="border-top: 1px solid var(--gold); margin: 15px auto; width: 80%; opacity: 0.3;"></div>
+            <button class="btn-vip" onclick="abrirExperienciaVIP()">EMPEZAR MI EXPERIENCIA</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalExperienciaVIP">
+        <div class="vip-experience-box">
+            <span class="vip-experience-close" onclick="cerrarExperienciaVIP()">✕</span>
+            <h2 class="vip-experience-title">¡TU EXPERIENCIA VIP TE ESPERA!</h2>
+            <p class="vip-experience-subtitle">Como cliente registrado, disfruta de estos beneficios exclusivos:</p>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(1)"><span class="vip-benefit-icon">💳</span><div class="vip-benefit-text"><h4>Descuentos VIP</h4><p>Hasta 20% en combos y pedidos especiales</p></div></div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(2)"><span class="vip-benefit-icon">🚀</span><div class="vip-benefit-text"><h4>Pedido Prioritario</h4><p>Entrega en menos de 20 minutos</p></div></div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(3)"><span class="vip-benefit-icon">🎉</span><div class="vip-benefit-text"><h4>Eventos Exclusivos</h4><p>Invitaciones a catas y eventos privados</p></div></div>
+            <button class="btn-cerrar-vip-experience" onclick="cerrarExperienciaVIP()">CERRAR Y VOLVER</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalRecuperar">
+        <div class="modal-box">
+            <div class="info-circular">?</div>
+            <h2 id="tituloRecuperar">Recuperar Acceso</h2>
+            <p id="descRecuperar">Ingresa tu correo electrónico para enviarte las instrucciones.</p>
+            <input type="email" id="emailRecuperar" placeholder="tu-correo@ejemplo.com">
+            <button class="btn-modal-blue" onclick="enviarInstrucciones()">ENVIAR INSTRUCCIONES</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalRecuperar')">CANCELAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalInstrucciones">
+        <div class="modal-box">
+            <div class="chulito-circular">✉</div>
+            <h2>¡Correo Enviado!</h2>
+            <p>Hemos enviado los pasos a seguir a tu bandeja de entrada. Revisa también tu carpeta de SPAM.</p>
+            <button class="btn-modal-blue" onclick="cerrarModal('modalInstrucciones')">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">
+            © 2026 Tiempo de Refrigerio<br>
+            Todos los derechos reservados • Proyecto Multimedia<br>
+            Desarrollado con ❤️ en Bogotá, Colombia
+        </div>
+    </footer>
+
+    <script src="assets/js/scripts.js"></script>
+    <script>
+        // Generar burbujas en el contenedor más amplio
+        (function() {
+            const emojisPago = ['💳','💵','🪙','💰','📱','🏦','🛡️','📲','💎','💸'];
+            const contenedor = document.getElementById('burbujasContainer');
+            if (contenedor) {
+                for (let i = 0; i < 14; i++) {
+                    const burbuja = document.createElement('span');
+                    burbuja.className = 'burbuja';
+                    burbuja.textContent = emojisPago[Math.floor(Math.random() * emojisPago.length)];
+                    burbuja.style.left = Math.random() * 90 + 5 + '%';
+                    burbuja.style.top = Math.random() * 80 + 10 + '%';
+                    burbuja.style.animationDuration = (6 + Math.random() * 8) + 's';
+                    burbuja.style.animationDelay = Math.random() * 5 + 's';
+                    burbuja.style.fontSize = (22 + Math.floor(Math.random() * 32)) + 'px';
+                    burbuja.style.opacity = (0.08 + Math.random() * 0.12);
+                    contenedor.appendChild(burbuja);
+                }
+            }
+        })();
+
+        // Acordeón maestro
+        function toggleMaestro() {
+            const maestro = document.getElementById('acordeonMaestro');
+            maestro.classList.toggle('abierto');
+            localStorage.setItem('maestroAbierto', maestro.classList.contains('abierto'));
+        }
+        (function() {
+            const maestro = document.getElementById('acordeonMaestro');
+            if (localStorage.getItem('maestroAbierto') === 'false') maestro.classList.remove('abierto');
+            else maestro.classList.add('abierto');
+        })();
+
+        // ------------------- LÓGICA DEL CARRITO + PAGO (SIN CAMBIOS) -------------------
+        const precios = {
+            'Empanadas': 3000,
+            'Arepa': 4000,
+            'Pastel': 3500,
+            'Buñuelo': 2000,
+            'Avena': 4500,
+            'Tinto': 2000,
+            'Gaseosa': 3000,
+            'Combo': 6000
+        };
+
+        let cantidades = {
+            'Empanadas': 0,
+            'Arepa': 0,
+            'Pastel': 0,
+            'Buñuelo': 0,
+            'Avena': 0,
+            'Tinto': 0,
+            'Gaseosa': 0,
+            'Combo': 0
+        };
+
+        let metodoPagoSeleccionado = '';
+
+        function changeQty(producto, delta) {
+            let nuevaCantidad = cantidades[producto] + delta;
+            if (nuevaCantidad < 0) nuevaCantidad = 0;
+            cantidades[producto] = nuevaCantidad;
+            document.getElementById('qty-' + producto).textContent = nuevaCantidad;
+            actualizarTotales();
+        }
+
+        function actualizarTotales() {
+            let total = 0;
+            for (let prod in cantidades) {
+                total += cantidades[prod] * precios[prod];
+            }
+            document.getElementById('cart-total-amount').textContent = total.toLocaleString();
+            document.getElementById('pagoTotalFinal').textContent = '$ ' + total.toLocaleString();
+
+            let detalleHTML = '';
+            let hayProductos = false;
+            const nombresBonitos = {
+                'Empanadas': '🥟 Empanada (Carne/Pollo)',
+                'Arepa': '🍳 Arepa de Huevo',
+                'Pastel': '🥔 Pastel de Yuca',
+                'Buñuelo': '🍩 Buñuelo',
+                'Avena': '🥤 Avena Helada',
+                'Tinto': '☕ Tinto / Perico',
+                'Gaseosa': '🥤 Gaseosa',
+                'Combo': '🎁 Combo Tiempo de Refrigerio'
+            };
+            for (let prod in cantidades) {
+                if (cantidades[prod] > 0) {
+                    hayProductos = true;
+                    let subtotal = cantidades[prod] * precios[prod];
+                    detalleHTML += `
+                        <div class="detalle-item">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 13px; font-weight: 600; color: #4a3520;">${nombresBonitos[prod] || prod}</span>
+                                <span style="background: #ffecd6; color: #b85e00; font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 14px;">x${cantidades[prod]}</span>
+                            </div>
+                            <span style="font-weight: 700; font-size: 14px; color: #3e2f1f; letter-spacing: -0.2px;">$${subtotal.toLocaleString()}</span>
+                        </div>`;
+                }
+            }
+            if (!hayProductos) {
+                document.getElementById('detallePagoItems').innerHTML = '<p style="color: #b0a090; text-align:center; padding:16px 20px; font-style: italic; font-size: 13px;">Elige productos en el carrito para ver el detalle.</p>';
+            } else {
+                document.getElementById('detallePagoItems').innerHTML = detalleHTML;
+            }
+        }
+
+        function enviarWhatsApp() {
+            let hayProductos = Object.values(cantidades).some(cant => cant > 0);
+            if (!hayProductos) {
+                alert('🛒 Tu carrito está vacío. Agrega productos antes de pedir.');
+                return;
+            }
+            let mensaje = 'Hola! Quiero pedir:%0A';
+            for (let prod in cantidades) {
+                if (cantidades[prod] > 0) {
+                    mensaje += `- ${cantidades[prod]}x ${prod} ($${precios[prod].toLocaleString()} c/u)%0A`;
+                }
+            }
+            mensaje += `Total: $${document.getElementById('cart-total-amount').textContent}`;
+            window.open(`https://wa.me/573138205720?text=${mensaje}`, '_blank');
+            for (let prod in cantidades) {
+                cantidades[prod] = 0;
+                document.getElementById('qty-' + prod).textContent = '0';
+            }
+            actualizarTotales();
+            alert('✅ Pedido enviado a WhatsApp. El carrito se ha vaciado.');
+        }
+
+        function seleccionarPago(elemento, metodo) {
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
+            elemento.classList.add('active');
+            metodoPagoSeleccionado = metodo;
+            document.getElementById('metodoSeleccionadoVal').value = metodo;
+        }
+
+        function procesarPedido() {
+            let hayProductos = Object.values(cantidades).some(cant => cant > 0);
+            if (!hayProductos) {
+                alert('🛒 No has seleccionado ningún producto. Agrega al menos uno al carrito.');
+                return;
+            }
+            if (!metodoPagoSeleccionado) {
+                alert('💳 Debes seleccionar un método de pago.');
+                return;
+            }
+            document.getElementById('modalConfirmado').style.display = 'flex';
+        }
+
+        function resetearPedidoCompleto() {
+            document.getElementById('modalConfirmado').style.display = 'none';
+            for (let prod in cantidades) {
+                cantidades[prod] = 0;
+                document.getElementById('qty-' + prod).textContent = '0';
+            }
+            actualizarTotales();
+            document.querySelectorAll('.payment-option').forEach(opt => opt.classList.remove('active'));
+            metodoPagoSeleccionado = '';
+            document.getElementById('metodoSeleccionadoVal').value = '';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            actualizarTotales();
+        });
+    </script>
+</body>
+</html>

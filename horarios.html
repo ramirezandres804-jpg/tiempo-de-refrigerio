@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horarios | Tiempo de Refrigerio</title>
+    <link rel="stylesheet" href="assets/css/estilos.css">
+
+    <style>
+        /* ── CONTENEDOR PADRE: ocupa toda la columna del grid ────── */
+        main.content-center {
+            display: flex;
+            flex-direction: column;
+            align-self: stretch;
+            position: relative;
+        }
+
+        /* ── RELOJ GRANDE EN EL CONTENEDOR EXTERIOR ──────────────── */
+        .clock-exterior {
+            position: absolute;
+            width: clamp(100px, 18vw, 220px);
+            opacity: 0.2;
+            right: 2%;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bubbleFloat 6s ease-in-out infinite alternate;
+            filter: grayscale(30%);
+            user-select: none;
+        }
+
+        .clock-exterior img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @keyframes bubbleFloat {
+            0%   { 
+                opacity: 0.18; 
+                transform: translateY(-52%) scale(1); 
+            }
+            100% { 
+                opacity: 0.28; 
+                transform: translateY(-48%) scale(1.06); 
+            }
+        }
+
+        /* ── FONDO ANIMADO CONTENEDOR EXTERIOR (hero-card) ─────── */
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg,
+                #fff8ee 0%,
+                #fff3d6 40%,
+                #ffeab8 70%,
+                #fff8ee 100%);
+            border-radius: 18px;
+            flex: 1;
+            width: 100%;
+            min-height: 340px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 30px;
+        }
+
+        /* ── CAPA DE FONDO ANIMADO (emojis + partículas) ─────────── */
+        .hero-bg-animated {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-bg-animated .fitem {
+            position: absolute;
+            font-size: clamp(22px, 4vw, 48px);
+            opacity: 0.13;
+            user-select: none;
+            animation: floatFood linear infinite;
+            will-change: transform, opacity;
+        }
+
+        .hero-bg-animated .fitem-fixed {
+            position: absolute;
+            font-size: clamp(20px, 3.5vw, 44px);
+            opacity: 0.10;
+            user-select: none;
+            animation: driftFixed ease-in-out infinite alternate;
+            will-change: transform, opacity;
+        }
+
+        .hero-bg-animated .fparticle {
+            position: absolute;
+            border-radius: 50%;
+            background: #f5a623;
+            opacity: 0.08;
+            animation: floatParticle ease-in-out infinite alternate;
+            will-change: transform;
+        }
+
+        .hero-bg-animated .brand-watermark {
+            position: absolute;
+            font-family: Georgia, 'Times New Roman', serif;
+            font-size: clamp(14px, 3vw, 32px);
+            font-weight: 900;
+            color: #c47d00;
+            opacity: 0.07;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            bottom: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: waveBrand ease-in-out 8s infinite alternate;
+            will-change: transform, opacity;
+        }
+
+        @keyframes floatFood {
+            0%   { transform: translateY(110%) rotate(0deg);   opacity: 0; }
+            10%  { opacity: 0.13; }
+            90%  { opacity: 0.13; }
+            100% { transform: translateY(-110%) rotate(25deg); opacity: 0; }
+        }
+
+        @keyframes driftFixed {
+            0%   { transform: translateY(0px)   rotate(-4deg); opacity: 0.08; }
+            100% { transform: translateY(-12px) rotate( 4deg); opacity: 0.14; }
+        }
+
+        @keyframes floatParticle {
+            0%   { transform: scale(1)   translateY(0px);  }
+            100% { transform: scale(1.4) translateY(-18px); }
+        }
+
+        @keyframes waveBrand {
+            0%   { opacity: 0.06; letter-spacing: 4px;  }
+            100% { opacity: 0.10; letter-spacing: 8px;  }
+        }
+
+        /* ── Contenido por encima del fondo ───────────────────── */
+        .hero-horarios {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* ============================================================
+           OPTIMIZACIÓN RESPONSIVE COMPLETA (F12 Y CELULARES)
+           ============================================================ */
+        @media (max-width: 992px) {
+            .main-wrapper {
+                grid-template-columns: 1fr !important;
+                padding: 12px;
+                gap: 15px;
+            }
+            .hero-card {
+                min-height: 280px;
+                padding: 24px 16px;
+            }
+            .hero-horarios h1 {
+                font-size: 26px;
+            }
+            .horarios-container {
+                width: 100% !important;
+                max-width: 100vw !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-card {
+                min-height: 260px;
+                padding: 20px 12px;
+                align-items: center;
+            }
+            .hero-horarios h1 {
+                font-size: 22px;
+            }
+            .hero-subtitle {
+                font-size: 14px;
+            }
+            .btn-desplegar-horarios {
+                font-size: 14px;
+                padding: 12px 24px;
+            }
+            /* Panel de horarios */
+            .schedule-grid {
+                grid-template-columns: 1fr !important;
+                gap: 16px;
+            }
+            .schedule-card {
+                padding: 20px 16px;
+            }
+            .whatsapp-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 16px;
+            }
+            .btn-wa-large {
+                width: 100%;
+                justify-content: center;
+            }
+            /* Aside */
+            aside {
+                width: 100% !important;
+            }
+            .side-card {
+                padding: 16px;
+                margin-bottom: 12px;
+            }
+            .map-container {
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-card {
+                min-height: 220px;
+                padding: 16px 10px;
+                align-items: center;
+                padding-top: 16px;
+            }
+            .hero-horarios h1 {
+                font-size: 18px;
+            }
+            .hero-subtitle {
+                font-size: 12px;
+            }
+            .btn-desplegar-horarios {
+                font-size: 12px;
+                padding: 10px 20px;
+            }
+            .clock-exterior {
+                width: 120px;
+                right: 5%;
+                opacity: 0.14;
+            }
+            /* Social icons */
+            .social-icons img {
+                width: 32px;
+                height: 32px;
+            }
+            /* Offcanvas */
+            .offcanvas {
+                width: min(85vw, 280px);
+            }
+        }
+
+        @media (max-width: 360px) {
+            .hero-card {
+                min-height: 200px;
+                padding: 12px 8px;
+                padding-top: 12px;
+            }
+            .hero-horarios h1 {
+                font-size: 16px;
+            }
+            .hero-subtitle {
+                font-size: 11px;
+            }
+            .btn-desplegar-horarios {
+                font-size: 11px;
+                padding: 8px 16px;
+            }
+            .schedule-card {
+                padding: 14px 10px;
+            }
+            .time-text {
+                font-size: 24px;
+            }
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           MEJORA VISUAL - TÍTULO, SUBTÍTULO Y BOTÓN PRINCIPALES
+           ═══════════════════════════════════════════════════════════ */
+        .hero-horarios h1 {
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff7e00, #ffb347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 2px rgba(255,140,0,0.3)); }
+            to   { filter: drop-shadow(0 0 8px rgba(255,140,0,0.6)); }
+        }
+
+        .hero-horarios h1 span {
+            background: linear-gradient(135deg, #ff4500, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 900;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(16px, 2.5vw, 20px);
+            color: #5a3e1b;
+            font-weight: 500;
+            max-width: 600px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .hero-subtitle::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: #ff8c00;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .btn-desplegar-horarios {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #ff8c00, #ff6500);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255,101,0,0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn-desplegar-horarios:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(255,101,0,0.6);
+        }
+    </style>
+</head>
+<body>
+    <header class="header-top">
+        <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
+        <a href="index.html" class="logo-container">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+        </a>
+        <div class="search-box">
+            <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
+            <button onclick="buscarSitio()">🔍 Buscar</button>
+        </div>
+    </header>
+
+    <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
+    <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
+        <div class="offcanvas-header">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="offcanvas-title">Menú Principal</div>
+            <button class="offcanvas-btn" onclick="window.location.href='index.html'">🏠 INICIO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='menu.html'">📋 MENÚ</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pedidos.html'">🛒 PEDIDOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pago.html'">💳 MÉTODOS DE PAGO</button>
+            <button class="offcanvas-btn active" onclick="window.location.href='horarios.html'">⏰ HORARIOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='contactanos.html'">📞 CONTÁCTANOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='trabaja.html'">💼 TRABAJA CON NOSOTROS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='chat.html'">💬 CHAT EN LÍNEA</button>
+            <button class="offcanvas-btn" onclick="window.location.href='nosotros.html'">👥 QUIÉNES SOMOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='registrate.html'">📝 REGÍSTRATE</button>
+            <button class="offcanvas-btn" onclick="window.location.href='ayuda.html'">❓ AYUDA</button>
+        </div>
+    </div>
+
+    <!-- Overlay y Panel de Horarios -->
+    <div class="offcanvas-overlay-horarios" id="offcanvasOverlayHorarios" onclick="toggleHorarios()"></div>
+    <div class="horarios-container" id="horariosContainer">
+        <div class="horarios-header">
+            <span>HORARIOS DE ATENCIÓN</span>
+            <span onclick="toggleHorarios()" style="cursor:pointer; font-size:32px; line-height:1;">✕</span>
+        </div>
+        <div class="horarios-body">
+            <p style="text-align:center; font-size:18px; color:#555; margin-bottom:35px;">
+                ¡Estamos listos para atenderte! Consulta nuestros horarios y programa tu delicia hoy mismo.
+            </p>
+
+            <div class="schedule-grid">
+                <div class="schedule-card">
+                    <div class="icon-box">📅</div>
+                    <span class="status-tag status-open">● Abierto ahora</span>
+                    <h2>LUNES A VIERNES</h2>
+                    <div class="time-text">6:30 am - 8:00 pm</div>
+                    <div class="sub-time">Jornada Laboral Continua</div>
+                </div>
+
+                <div class="schedule-card">
+                    <div class="icon-box">🍕</div>
+                    <span class="status-tag status-event">Bajo Programación</span>
+                    <h2>SÁBADOS Y DOMINGOS</h2>
+                    <div class="time-text">Eventos & Buffet</div>
+                    <div class="sub-time">Pedidos corporativos con 24h de anticipación</div>
+                </div>
+            </div>
+
+            <div class="whatsapp-banner">
+                <div class="wa-info">
+                    <h3>¿Necesitas un pedido programado?</h3>
+                    <p>Asegura tu refrigerio para mañana mismo por nuestro canal oficial.</p>
+                </div>
+                <a href="https://wa.me/573138205720?text=Hola,%20quisiera%20programar%20un%20pedido." target="_blank" class="btn-wa-large">
+                    <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" width="28" alt="WA">
+                    ESCRIBIR AL WHATSAPP
+                </a>
+            </div>
+
+            <div style="text-align:center; margin-top:20px;">
+                <a href="pedidos.html" class="btn-pedidos-call">🛒 ¡SOLICITA TU PEDIDO AQUÍ!</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-wrapper" style="grid-template-columns: 1fr 300px;">
+        <main class="content-center">
+            <div class="clock-exterior">
+                <img src="assets/images/horario.png" alt="Reloj Horario">
+            </div>
+            <div class="hero-card">
+                <div class="hero-bg-animated" id="heroBgAnimated" aria-hidden="true">
+                    <div class="brand-watermark">Tiempo de Refrigerio</div>
+                </div>
+                <div class="hero-horarios">
+                    <h1>HORARIOS DE <span>ATENCIÓN</span></h1>
+                    <p class="hero-subtitle">¡Estamos listos para atenderte! Consulta nuestros horarios y programa tu delicia hoy mismo.</p>
+                    <button onclick="toggleHorarios()" class="btn-desplegar-horarios">⏰ VER HORARIOS COMPLETOS</button>
+                </div>
+            </div>
+        </main>
+
+        <aside>
+            <div class="side-card">
+                <h3>Acceso Clientes</h3>
+                <div class="login-form">
+                    <label>Usuario</label>
+                    <input type="text" id="userInput" placeholder="Usuario o Correo">
+                    <label>Contraseña</label>
+                    <input type="password" id="passInput" placeholder="Contraseña">
+                    <button class="btn-login" onclick="manejarLogin()">INICIAR SESIÓN</button>
+                    <div class="login-links">
+                        <a onclick="abrirModalRecuperar('pass')">Olvido su contraseña</a>
+                        <a onclick="abrirModalRecuperar('user')">Olvido su usuario</a>
+                        <a href="registrate.html">Regístrate</a>
+                    </div>
+                </div>
+            </div>
+            <div class="side-card">
+                <h3>Síguenos</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" title="Síguenos en Facebook"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="FB"></a>
+                    <a href="https://www.instagram.com" target="_blank" title="Síguenos en Instagram"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="IG"></a>
+                    <a href="https://www.tiktok.com" target="_blank" title="Síguenos en TikTok"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TK"></a>
+                    <a href="https://wa.me/573138205720" target="_blank" title="Escríbenos al WhatsApp"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA"></a>
+                </div>
+                <div class="map-container" style="margin-top: 15px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3977.0123!2d-74.1956!3d4.6097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMzYnMzQuOSJOIDc0wrAxMSc0NC4yIlc!5e0!3m2!1ses!2sco!4v1614123456789!5m2!1ses!2sco" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="ubicacion-llamativa">
+                    <strong>📍 ¡VISÍTANOS EN NUESTRA SEDE PRINCIPAL!</strong>
+                    <p>CL 56 G NO 90B 59 SUR <br> Bosa, Bogotá</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modales -->
+    <div class="modal-overlay" id="modalBienvenida">
+        <div class="modal-box modal-vip">
+            <span class="vip-crown">👑</span>
+            <h2 id="tituloVIP">ACCESO EXCLUSIVO</h2>
+            <p id="msgBienvenida">Es un honor tenerte de vuelta. Tu mesa VIP y los mejores sabores colombianos te están esperando.</p>
+            <div style="border-top: 1px solid var(--gold); margin: 15px 0; opacity: 0.3;"></div>
+            <button class="btn-vip" onclick="abrirExperienciaVIP()">EMPEZAR MI EXPERIENCIA</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalExperienciaVIP">
+        <div class="vip-experience-box">
+            <span class="vip-experience-close" onclick="cerrarExperienciaVIP()">✕</span>
+            <h2 class="vip-experience-title">¡TU EXPERIENCIA VIP TE ESPERA!</h2>
+            <p class="vip-experience-subtitle">Como cliente registrado, disfruta de estos beneficios exclusivos:</p>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(1)"><span class="vip-benefit-icon">💳</span><div class="vip-benefit-text"><h4>Descuentos VIP</h4><p>Hasta 20% en combos y pedidos especiales</p></div></div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(2)"><span class="vip-benefit-icon">🚀</span><div class="vip-benefit-text"><h4>Pedido Prioritario</h4><p>Entrega en menos de 20 minutos</p></div></div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(3)"><span class="vip-benefit-icon">🎉</span><div class="vip-benefit-text"><h4>Eventos Exclusivos</h4><p>Invitaciones a catas y eventos privados</p></div></div>
+            <button class="btn-cerrar-vip-experience" onclick="cerrarExperienciaVIP()">CERRAR Y VOLVER</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalRecuperar">
+        <div class="modal-box">
+            <div class="info-circular">?</div>
+            <h2 id="tituloRecuperar">Recuperar Acceso</h2>
+            <p id="descRecuperar">Ingresa tu correo electrónico para enviarte las instrucciones.</p>
+            <input type="email" id="emailRecuperar" placeholder="tu-correo@ejemplo.com">
+            <button class="btn-modal-blue" onclick="enviarInstrucciones()">ENVIAR INSTRUCCIONES</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalRecuperar')">CANCELAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalInstrucciones">
+        <div class="modal-box">
+            <div class="chulito-circular">✉</div>
+            <h2>¡Correo Enviado!</h2>
+            <p>Hemos enviado los pasos a seguir a tu bandeja de entrada. Revisa también tu carpeta de SPAM.</p>
+            <button class="btn-modal-blue" onclick="cerrarModal('modalInstrucciones')">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">
+            © 2026 Tiempo de Refrigerio<br>
+            Todos los derechos reservados • Proyecto Multimedia<br>
+            Desarrollado con ❤️ en Bogotá, Colombia
+        </div>
+    </footer>
+
+    <script src="assets/js/scripts.js"></script>
+    <script>
+        function toggleHorarios() {
+            var panel   = document.getElementById('horariosContainer');
+            var overlay = document.getElementById('offcanvasOverlayHorarios');
+            if (panel && overlay) {
+                panel.classList.toggle('show');
+                overlay.classList.toggle('show');
+            }
+        }
+
+        (function generarFondoAnimado() {
+            var bg = document.getElementById('heroBgAnimated');
+            if (!bg) return;
+            var emojis = ['🍽️','☕','🥗','🍲','🥐','🧆','🍛','🫕','🥤','🍱','🧇','🥞','🫔','🌮','🥙','🍜','⏰','🕐','🕑','🕒','🕓'];
+            var isMobile = window.innerWidth < 600;
+            var cantFlot = isMobile ? 6 : 14;
+            for (var i = 0; i < cantFlot; i++) {
+                var el = document.createElement('div');
+                el.className = 'fitem';
+                el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                el.style.left = (Math.random() * 93) + '%';
+                var dur   = (10 + Math.random() * 16).toFixed(1);
+                var delay = (Math.random() * 14).toFixed(1);
+                el.style.animationDuration = dur + 's';
+                el.style.animationDelay   = '-' + delay + 's';
+                el.style.fontSize = isMobile ? (18 + Math.random() * 16) + 'px' : (24 + Math.random() * 28) + 'px';
+                bg.appendChild(el);
+            }
+            var zonas = isMobile ? 8 : 20;
+            for (var z = 0; z < zonas; z++) {
+                var ef = document.createElement('div');
+                ef.className = 'fitem-fixed';
+                ef.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                ef.style.left = (3 + Math.random() * 90) + '%';
+                ef.style.top  = (3 + Math.random() * 90) + '%';
+                var fdur  = (4 + Math.random() * 6).toFixed(1);
+                var fdelay= (Math.random() * 6).toFixed(1);
+                ef.style.animationDuration = fdur + 's';
+                ef.style.animationDelay   = fdelay + 's';
+                ef.style.fontSize = isMobile ? (16 + Math.random() * 18) + 'px' : (22 + Math.random() * 26) + 'px';
+                bg.appendChild(ef);
+            }
+            var numP = isMobile ? 5 : 12;
+            for (var j = 0; j < numP; j++) {
+                var p = document.createElement('div');
+                p.className = 'fparticle';
+                var sz = (8 + Math.random() * 20) + 'px';
+                p.style.width  = sz;
+                p.style.height = sz;
+                p.style.left   = (Math.random() * 100) + '%';
+                p.style.top    = (Math.random() * 100) + '%';
+                p.style.animationDuration = (3 + Math.random() * 5).toFixed(1) + 's';
+                p.style.animationDelay   = (Math.random() * 4).toFixed(1) + 's';
+                bg.appendChild(p);
+            }
+        })();
+    </script>
+</body>
+</html>

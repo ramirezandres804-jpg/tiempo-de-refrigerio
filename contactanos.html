@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contáctanos | Tiempo de Refrigerio</title>
+    <link rel="stylesheet" href="assets/css/estilos.css">
+    <style>
+        /* Aseguramos que los tooltips de error tengan fondo rojo y letra blanca */
+        .ctc-error-tooltip {
+            display: none;
+            font-size: 13px;
+            margin-top: 4px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background-color: #e53935 !important; /* rojo intenso */
+            color: #ffffff !important;            /* letra blanca */
+            font-weight: bold;
+        }
+        .ctc-error-tooltip.show {
+            display: block;
+        }
+        /* Estados de los campos */
+        .campo-error {
+            border: 2px solid #e53935 !important;
+        }
+        .campo-ok {
+            border: 2px solid #4caf50 !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header-top">
+        <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
+        <a href="index.html" class="logo-container">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+        </a>
+        <div class="search-box">
+            <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
+            <button onclick="buscarSitio()">🔍 Buscar</button>
+        </div>
+    </header>
+
+    <!-- OFFCANVAS MENÚ -->
+    <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
+    <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
+        <div class="offcanvas-header">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="offcanvas-title">Menú Principal</div>
+            <button class="offcanvas-btn" onclick="window.location.href='index.html'">🏠 INICIO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='menu.html'">📋 MENÚ</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pedidos.html'">🛒 PEDIDOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pago.html'">💳 MÉTODOS DE PAGO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='horarios.html'">⏰ HORARIOS</button>
+            <button class="offcanvas-btn active" onclick="window.location.href='contactanos.html'">📞 CONTÁCTANOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='trabaja.html'">💼 TRABAJA CON NOSOTROS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='chat.html'">💬 CHAT EN LÍNEA</button>
+            <button class="offcanvas-btn" onclick="window.location.href='nosotros.html'">👥 QUIÉNES SOMOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='registrate.html'">📝 REGÍSTRATE</button>
+            <button class="offcanvas-btn" onclick="window.location.href='ayuda.html'">❓ AYUDA</button>
+        </div>
+    </div>
+
+    <!-- PANEL FORMULARIO -->
+    <div class="offcanvas-form-overlay" id="offcanvasFormOverlay" onclick="toggleFormulario()"></div>
+    <div class="offcanvas-form-panel" id="offcanvasFormPanel">
+        <div class="offcanvas-form-header">
+            <div class="offcanvas-form-header-title">
+                <span class="header-icon">✉️</span>
+                <span>Escríbenos</span>
+                <small>Te respondemos muy pronto 🚀</small>
+            </div>
+            <button class="offcanvas-form-header-close" onclick="toggleFormulario()">✕</button>
+        </div>
+        <div class="offcanvas-form-body">
+            <div class="form-intro-badge">
+                <span class="badge-icon">💬</span>
+                <p>Cuéntanos tu duda o sugerencia. Un asesor de <strong>Tiempo de Refrigerio</strong> te atenderá personalmente.</p>
+            </div>
+            <form id="formContactoPlegable" class="form-contacto" onsubmit="enviarMensajeContacto(event)" style="display:block;">
+                <div class="form-group">
+                    <label><span class="lbl-icon">👤</span> Nombre Completo</label>
+                    <input type="text" id="ctcNombre" placeholder="Tu nombre completo..." required>
+                    <div class="ctc-error-tooltip" id="err_ctcNombre"></div>
+                </div>
+                <!-- NUEVO: Tipo y Número de Documento -->
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label><span class="lbl-icon">🪪</span> Tipo de Documento</label>
+                        <select id="ctcTipoDoc" style="width:100%; padding: 12px; border: 2px solid #e8e8e8; border-radius: 10px; background: white; font-size: 14px;">
+                            <option value="CC">Cédula de Ciudadanía</option>
+                            <option value="CE">Cédula de Extranjería</option>
+                            <option value="PA">Pasaporte</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label><span class="lbl-icon">🔢</span> Número de Documento</label>
+                        <input type="text" id="ctcNumDoc" placeholder="Ej: 1234567890" maxlength="15" required>
+                        <div class="ctc-error-tooltip" id="err_ctcNumDoc"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label><span class="lbl-icon">📞</span> Teléfono de Contacto</label>
+                    <div class="tel-row">
+                        <select id="ctcTelTipo">
+                            <option value="celular">📱 Celular (10 dígitos, empieza en 3)</option>
+                            <option value="fijo">☎️ Fijo (10 dígitos, empieza en 60)</option>
+                        </select>
+                        <input type="text" id="ctcTelNum" placeholder="Ej: 6012345678" maxlength="10" required>
+                    </div>
+                    <div class="ctc-error-tooltip" id="err_ctcTelNum"></div>
+                </div>
+                <div class="form-group">
+                    <label><span class="lbl-icon">📧</span> Correo Electrónico</label>
+                    <input type="text" id="ctcEmail" placeholder="ejemplo@correo.com" required>
+                    <div class="ctc-error-tooltip" id="err_ctcEmail"></div>
+                </div>
+                <div class="form-group">
+                    <label><span class="lbl-icon">📌</span> Motivo del contacto</label>
+                    <select id="ctcMotivo" required>
+                        <option value="">Selecciona una opción...</option>
+                        <option value="pedido">🛒 Información sobre nuevos productos </option>
+                        <option value="evento">🎉 Cotización de eventos</option>
+                        <option value="queja">💡  Felicitaciones/agradecimientos</option>
+                    </select>
+                    <div class="ctc-error-tooltip" id="err_ctcMotivo"></div>
+                </div>
+                <div class="form-divider"><span>tu mensaje</span></div>
+                <div class="form-group">
+                    <label><span class="lbl-icon">✏️</span> Mensaje</label>
+                    <textarea id="ctcMensaje" placeholder="Escribe aquí todos los detalles de tu mensaje..." required></textarea>
+                    <div class="ctc-error-tooltip" id="err_ctcMensaje"></div>
+                </div>
+                <button type="submit" class="btn-enviar-contacto">📨 ENVIAR MI MENSAJE</button>
+            </form>
+            <p class="form-footer-note">🔒 Tu información es privada y segura.</p>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+        <aside>
+            <button class="btn-toggle-buzon" onclick="toggleBuzon()">ABRIR BUZÓN DE OPINIONES ⭐</button>
+            <div class="buzon-card" id="miBuzon">
+                <div class="buzon-header"> CALIFICA TU EXPERIENCIA <span onclick="toggleBuzon()" style="cursor:pointer">✖</span> </div>
+                <div class="encuesta-body">
+                    <div id="preguntas-contenedor"></div>
+                    <textarea id="opinionTexto" placeholder="Déjanos tus comentarios adicionales aquí..."></textarea>
+                    <button class="btn-enviar" onclick="enviarEncuesta()">ENVIAR CALIFICACIÓN 🚀</button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content-center">
+            <h2 class="bienvenidos-titulo">CONTÁCTANOS CUANDO LO REQUIERAS</h2>
+            <p style="font-size: 21px; font-weight: 700; color: var(--naranja-oscuro); margin-top: 6px; margin-bottom: 10px; letter-spacing: 0.8px;">¡HABLEMOS UN RATO!</p>
+            <p style="font-size: 15.5px; color: #444; line-height: 1.65; font-style: italic; margin-top: 0; font-weight: 400;">Hagamos de tu refrigerio una experiencia única y memorable. ¡Nuestra vendedora te espera con los sabores más auténticos y la atención personalizada que mereces!</p>
+            <div class="contacto-container-foto">
+                <img src="https://tiempoderefrigerio.joomla.com/images/contactanos11.jpg" alt="Contáctanos" class="foto-contacto">
+                <div class="info-rapida">
+                    <div class="info-box-item"><strong>📞 LLÁMANOS</strong>313 820 5720</div>
+                    <div class="info-box-item"><strong>✅ CORREO</strong>contacto@tiempoderefrigerio.com</div>
+                    <div class="info-box-item"><strong>📍 UBICACIÓN</strong>Bosa, Bogotá - Colombia</div>
+                </div>
+            </div>
+            <button class="btn-plegar-contacto" onclick="toggleFormulario()">
+                <span>ESCRÍBENOS UN MENSAJE DIRECTO</span>
+                <span id="flechaForm">▼</span>
+            </button>
+        </main>
+
+        <aside>
+            <div class="side-card">
+                <h3>Acceso Clientes</h3>
+                <div class="login-form">
+                    <label>Usuario</label>
+                    <input type="text" id="userInput" placeholder="Usuario o Correo">
+                    <label>Contraseña</label>
+                    <input type="password" id="passInput" placeholder="Contraseña">
+                    <button class="btn-login" onclick="manejarLogin()">INICIAR SESIÓN</button>
+                    <div class="login-links">
+                        <a onclick="abrirModalRecuperar('la contraseña')">Olvido su contraseña</a>
+                        <a onclick="abrirModalRecuperar('el usuario')">Olvido su usuario</a>
+                        <a href="registrate.html">Regístrate</a>
+                    </div>
+                </div>
+            </div>
+            <div class="side-card">
+                <h3>Síguenos</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="FB"></a>
+                    <a href="https://www.instagram.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="IG"></a>
+                    <a href="https://www.tiktok.com" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TK"></a>
+                    <a href="https://wa.me/573138205720" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA"></a>
+                </div>
+                <div class="map-container" style="margin-top: 15px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3977.0123!2d-74.1956!3d4.6097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMzYnMzQuOSJOIDc0wrAxMSc0NC4yIlc!5e0!3m2!1ses!2sco!4v1614123456789!5m2!1ses!2sco" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="ubicacion-llamativa">
+                    <strong>📍 ¡VISÍTANOS EN NUESTRA SEDE PRINCIPAL!</strong>
+                    <p>CL 56 G NO 90B 59 SUR <br> Bosa, Bogotá</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- MODALES -->
+    <div class="modal-overlay" id="modalExitoContacto">
+        <div class="modal-box modal-exito-animado">
+            <div class="chulito-circular">✔</div>
+            <h2 style="color: var(--excelente);">¡ENVÍO EXITOSO!</h2>
+            <p style="font-weight: bold; color: #444;">Hemos recibido tu mensaje correctamente.</p>
+            <p>Un asesor de <strong>Tiempo de Refrigerio</strong> se pondrá en contacto contigo muy pronto para brindarte la mejor atención.</p>
+            <button class="btn-enviar-contacto" onclick="window.location.href='index.html'">ENTENDIDO, GRACIAS</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalGracias">
+        <div class="modal-box">
+            <div class="chulito-circular">✔</div>
+            <h2>¡Gracias por tu mensaje!</h2>
+            <p>Tu opinión es fundamental para seguir brindándote lo mejor de nuestra tradición.</p>
+            <button class="btn-modal-blue" onclick="location.reload()">GENERAR OTRA ENCUESTA</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalGracias')">CERRAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalBienvenida">
+        <div class="modal-box modal-vip">
+            <span class="vip-crown">👑</span>
+            <h2 id="tituloVIP">ACCESO EXCLUSIVO</h2>
+            <p id="msgBienvenida">Bienvenido a la experiencia VIP de Tiempo de Refrigerio.</p>
+            <hr style="border: 0; border-top: 1px solid rgba(255, 152, 0, 0.3); margin: 15px auto; width: 80%;">
+            <button class="btn-vip" onclick="abrirExperienciaVIP()">EMPEZAR MI EXPERIENCIA</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalExperienciaVIP">
+        <div class="vip-experience-box">
+            <span class="vip-experience-close" onclick="cerrarExperienciaVIP()">✕</span>
+            <h2 class="vip-experience-title">¡TU EXPERIENCIA VIP TE ESPERA!</h2>
+            <p class="vip-experience-subtitle">Como cliente registrado, disfruta de estos beneficios exclusivos:</p>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(1)">
+                <span class="vip-benefit-icon">💳</span>
+                <div class="vip-benefit-text"><h4>Descuentos VIP</h4><p>Hasta 20% en combos y pedidos especiales</p></div>
+            </div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(2)">
+                <span class="vip-benefit-icon">🚀</span>
+                <div class="vip-benefit-text"><h4>Pedido Prioritario</h4><p>Entrega en menos de 20 minutos</p></div>
+            </div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(3)">
+                <span class="vip-benefit-icon">🎉</span>
+                <div class="vip-benefit-text"><h4>Eventos Exclusivos</h4><p>Invitaciones a catas y eventos privados</p></div>
+            </div>
+            <button class="btn-cerrar-vip-experience" onclick="cerrarExperienciaVIP()">CERRAR Y VOLVER</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalRecuperar">
+        <div class="modal-box">
+            <div class="info-circular">?</div>
+            <h2 id="tituloRecuperar">Recuperar Acceso</h2>
+            <p id="instruccionRecuperar" style="font-size: 14px; color: #666; margin-bottom: 15px;"></p>
+            <input type="email" id="emailRecuperar" placeholder="tu-correo@ejemplo.com" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 15px;">
+            <button class="btn-modal-blue" onclick="enviarInstrucciones()">ENVIAR INSTRUCCIONES</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalRecuperar')">CANCELAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalInstrucciones">
+        <div class="modal-box">
+            <div class="chulito-circular">✉</div>
+            <h2>¡Correo Enviado!</h2>
+            <p>Hemos enviado los pasos a seguir a tu bandeja de entrada. Revisa también tu carpeta de SPAM.</p>
+            <button class="btn-modal-blue" onclick="cerrarModal('modalInstrucciones')">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">
+            &copy; 2026 Tiempo de Refrigerio<br>
+            Todos los derechos reservados &bull; Proyecto Multimedia<br>
+            Desarrollado con ❤️ en Bogotá, Colombia
+        </div>
+    </footer>
+
+    <script src="assets/js/scripts.js"></script>
+    <script>
+        // Funciones helper
+        function resetFormularioContacto() {
+            var form = document.getElementById('formContactoPlegable');
+            if (form) form.reset();
+            var campos = ['ctcNombre', 'ctcNumDoc', 'ctcTelNum', 'ctcEmail', 'ctcMotivo', 'ctcMensaje'];
+            campos.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) {
+                    el.classList.remove('campo-error', 'campo-ok');
+                }
+                var err = document.getElementById('err_' + id);
+                if (err) {
+                    err.classList.remove('show');
+                    err.innerText = '';
+                }
+            });
+        }
+
+        function mostrarError(id, mensaje) {
+            var el = document.getElementById(id);
+            var err = document.getElementById('err_' + id);
+            if (el) {
+                el.classList.add('campo-error');
+                el.classList.remove('campo-ok');
+            }
+            if (err) {
+                err.innerText = mensaje;
+                err.classList.add('show');
+            }
+        }
+
+        function mostrarExito(id) {
+            var el = document.getElementById(id);
+            var err = document.getElementById('err_' + id);
+            if (el) {
+                el.classList.remove('campo-error');
+                el.classList.add('campo-ok');
+            }
+            if (err) {
+                err.classList.remove('show');
+                err.innerText = '';
+            }
+        }
+
+        // Validación nombre
+        document.getElementById('ctcNombre').addEventListener('input', function() {
+            var valor = this.value;
+            var filtrado = valor.replace(/[^A-Za-zÁáÉéÍíÓóÚúÜüÑñ\s]/g, '');
+            if (filtrado !== valor) {
+                this.value = filtrado;
+                mostrarError('ctcNombre', 'Solo letras y espacios.');
+            } else if (filtrado.trim().length > 0) {
+                mostrarExito('ctcNombre');
+            } else {
+                this.classList.remove('campo-error', 'campo-ok');
+                document.getElementById('err_ctcNombre').classList.remove('show');
+            }
+        });
+
+        // ── LÓGICA DOCUMENTO ──
+        var ctcTipoDoc = document.getElementById('ctcTipoDoc');
+        var ctcNumDoc = document.getElementById('ctcNumDoc');
+
+        ctcTipoDoc.addEventListener('change', function() {
+            ctcNumDoc.value = '';
+            ctcNumDoc.classList.remove('campo-error', 'campo-ok');
+            document.getElementById('err_ctcNumDoc').classList.remove('show');
+        });
+
+        ctcNumDoc.addEventListener('input', function() {
+            var tipo = ctcTipoDoc.value;
+            if (tipo === 'PA') {
+                this.value = this.value.replace(/[^A-Za-z0-9]/g, '');
+            } else {
+                if (/[^0-9]/.test(this.value)) {
+                    mostrarError('ctcNumDoc', 'Solo se permiten números para este tipo de documento.');
+                    return;
+                }
+            }
+            var valor = this.value;
+            if (valor.length === 0) {
+                this.classList.remove('campo-error', 'campo-ok');
+                document.getElementById('err_ctcNumDoc').classList.remove('show');
+            } else if (valor.length < 5) {
+                mostrarError('ctcNumDoc', 'Mínimo 5 caracteres.');
+            } else {
+                mostrarExito('ctcNumDoc');
+            }
+        });
+
+        // Teléfono
+        var telTipo = document.getElementById('ctcTelTipo');
+        var telInput = document.getElementById('ctcTelNum');
+
+        function validarTelefono() {
+            var valor = telInput.value.replace(/\D/g, '');
+            if (valor.length === 0) {
+                mostrarError('ctcTelNum', 'El teléfono es obligatorio.');
+                return false;
+            }
+            var tipo = telTipo.value;
+            if (valor.length !== 10) {
+                mostrarError('ctcTelNum', 'Debe tener exactamente 10 dígitos.');
+                return false;
+            }
+            if (tipo === 'celular') {
+                if (!/^3/.test(valor)) {
+                    mostrarError('ctcTelNum', 'Celular debe empezar con 3.');
+                    return false;
+                }
+            } else {
+                if (!/^60/.test(valor)) {
+                    mostrarError('ctcTelNum', 'Fijo debe empezar con 60 + el indicativo de ciudad.');
+                    return false;
+                }
+            }
+            mostrarExito('ctcTelNum');
+            return true;
+        }
+
+        telInput.addEventListener('input', function() {
+            var soloDigitos = this.value.replace(/\D/g, '');
+            if (soloDigitos !== this.value) this.value = soloDigitos;
+            validarTelefono();
+        });
+        telTipo.addEventListener('change', validarTelefono);
+
+        // Email
+        document.getElementById('ctcEmail').addEventListener('input', function() {
+            var email = this.value.trim();
+            if (email === '') {
+                this.classList.remove('campo-error', 'campo-ok');
+                document.getElementById('err_ctcEmail').classList.remove('show');
+                return;
+            }
+            var resultado = validarEmail(email);
+            if (!resultado.ok) {
+                mostrarError('ctcEmail', resultado.msg);
+            } else {
+                mostrarExito('ctcEmail');
+            }
+        });
+
+        // Motivo
+        document.getElementById('ctcMotivo').addEventListener('change', function() {
+            if (this.value === '') {
+                mostrarError('ctcMotivo', 'Selecciona un motivo.');
+            } else {
+                mostrarExito('ctcMotivo');
+            }
+        });
+
+        // Mensaje
+        document.getElementById('ctcMensaje').addEventListener('input', function() {
+            if (this.value.trim() === '') {
+                mostrarError('ctcMensaje', 'El mensaje no puede estar vacío.');
+            } else {
+                mostrarExito('ctcMensaje');
+            }
+        });
+
+        function toggleFormulario() {
+            var panel = document.getElementById('offcanvasFormPanel');
+            var overlay = document.getElementById('offcanvasFormOverlay');
+            var flecha = document.getElementById('flechaForm');
+            if (panel && overlay) {
+                var isOpen = panel.classList.toggle('show');
+                overlay.classList.toggle('show');
+                if (flecha) {
+                    flecha.innerHTML = isOpen ? '▲' : '▼';
+                }
+                if (!isOpen) {
+                    resetFormularioContacto();
+                }
+            }
+        }
+
+        function enviarMensajeContacto(event) {
+            event.preventDefault();
+
+            // Validar nombre
+            var nombreInput = document.getElementById('ctcNombre');
+            if (nombreInput.value.trim() === '' || /[^A-Za-zÁáÉéÍíÓóÚúÜüÑñ\s]/.test(nombreInput.value)) {
+                mostrarError('ctcNombre', 'Nombre inválido (solo letras).');
+            } else {
+                mostrarExito('ctcNombre');
+            }
+
+            // Validar documento
+            var tipoDoc = ctcTipoDoc.value;
+            var numDoc = ctcNumDoc.value.trim();
+            var docError = false;
+            if (numDoc.length === 0) {
+                mostrarError('ctcNumDoc', 'El número de documento es obligatorio.');
+                docError = true;
+            } else if (tipoDoc !== 'PA' && /[^0-9]/.test(numDoc)) {
+                mostrarError('ctcNumDoc', 'Solo se permiten números para este tipo de documento.');
+                docError = true;
+            } else if (numDoc.length < 5) {
+                mostrarError('ctcNumDoc', 'Mínimo 5 caracteres.');
+                docError = true;
+            } else {
+                mostrarExito('ctcNumDoc');
+            }
+
+            // Teléfono
+            var telValido = validarTelefono();
+
+            // Email
+            var emailVal = document.getElementById('ctcEmail').value.trim();
+            if (emailVal === '') {
+                mostrarError('ctcEmail', 'El correo es obligatorio.');
+            } else {
+                var valid = validarEmail(emailVal);
+                if (!valid.ok) {
+                    mostrarError('ctcEmail', valid.msg);
+                } else {
+                    mostrarExito('ctcEmail');
+                }
+            }
+
+            // Motivo
+            var motivoInput = document.getElementById('ctcMotivo');
+            if (motivoInput.value === '') {
+                mostrarError('ctcMotivo', 'Selecciona un motivo.');
+            } else {
+                mostrarExito('ctcMotivo');
+            }
+
+            // Mensaje
+            var mensajeInput = document.getElementById('ctcMensaje');
+            if (mensajeInput.value.trim() === '') {
+                mostrarError('ctcMensaje', 'El mensaje no puede estar vacío.');
+            } else {
+                mostrarExito('ctcMensaje');
+            }
+
+            var hayErrores = document.querySelectorAll('#formContactoPlegable .campo-error').length > 0;
+            if (hayErrores || !telValido || docError) return;
+
+            toggleFormulario();
+            document.getElementById('modalExitoContacto').style.display = 'flex';
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            resetFormularioContacto();
+        });
+    </script>
+</body>
+</html>

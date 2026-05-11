@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat en Línea | Tiempo de Refrigerio</title>
+    <link rel="stylesheet" href="assets/css/estilos.css">
+    <style>
+        .content-center {
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+            z-index: 0;
+        }
+
+        .content-center::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background-image: url('https://tiempoderefrigerio.joomla.com/images/headers/PORTADA.png?1773187771000');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -1;
+            animation: moverFondo 15s ease-in-out infinite alternate;
+        }
+
+        @keyframes moverFondo {
+            from { transform: translateY(0); }
+            to   { transform: translateY(-8%); }
+        }
+
+        .content-center > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .chat-window {
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
+            touch-action: manipulation;
+            flex: 1 1 auto;
+            min-height: 0;
+        }
+
+        body.no-scroll {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+        }
+
+        .quick-reply-chip.vip-chip {
+            background: linear-gradient(135deg, #DAA520, #B8860B);
+            color: #fff;
+            border: 2px solid #FFD700;
+            box-shadow: 0 0 14px rgba(218, 165, 32, 0.55);
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            animation: vipPulse 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quick-reply-chip.vip-chip::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.35) 0%, transparent 70%);
+            animation: vipShine 2.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes vipPulse {
+            0%, 100% { box-shadow: 0 0 14px rgba(218, 165, 32, 0.55); }
+            50% { box-shadow: 0 0 26px rgba(255, 215, 0, 0.9), 0 0 40px rgba(218, 165, 32, 0.5); }
+        }
+
+        @keyframes vipShine {
+            0%   { transform: translate(-30%, -30%) rotate(0deg); }
+            100% { transform: translate(30%, 30%) rotate(180deg); }
+        }
+
+        .quick-reply-chip.vip-chip:hover {
+            background: linear-gradient(135deg, #FFD700, #DAA520);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 50px rgba(218, 165, 32, 0.7);
+            transform: translateY(-2px);
+        }
+
+        .chat-window.vip-theme {
+            box-shadow: 0 0 40px rgba(218, 165, 32, 0.7), 0 0 80px rgba(255, 215, 0, 0.35);
+            border: 2px solid #DAA520;
+            transition: box-shadow 0.6s ease, border 0.6s ease;
+        }
+
+        .chat-window.vip-theme .chat-header {
+            background: linear-gradient(135deg, #8B6914 0%, #B8860B 30%, #DAA520 60%, #FFD700 100%);
+            border-bottom: 2px solid #FFD700;
+            transition: background 0.6s ease, border-bottom 0.6s ease;
+        }
+
+        .chat-window.vip-theme .chat-agent-name {
+            color: #fff8e7;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+        }
+
+        .chat-window.vip-theme .chat-agent-status {
+            color: #ffe9a7;
+        }
+
+        .chat-window.vip-theme .status-dot {
+            background: #FFD700;
+            box-shadow: 0 0 10px #FFD700, 0 0 20px rgba(255, 215, 0, 0.6);
+        }
+
+        .chat-window.vip-theme .chat-header-close {
+            color: #fff;
+            text-shadow: 0 0 6px rgba(255, 215, 0, 0.5);
+        }
+
+        .chat-window.vip-theme .chat-input-area {
+            border-top: 2px solid rgba(218, 165, 32, 0.5);
+            background: #1a1a0e;
+            transition: background 0.6s ease, border-top 0.6s ease;
+        }
+
+        .chat-window.vip-theme .chat-input-area input {
+            background: #2a2618;
+            border: 1px solid #DAA520;
+            color: #FFD700;
+        }
+
+        .chat-window.vip-theme .btn-send {
+            background: linear-gradient(135deg, #DAA520, #B8860B);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(218, 165, 32, 0.5);
+        }
+
+        .chat-window.vip-theme .chat-footer-brand {
+            background: #1a1508;
+            color: #DAA520;
+            border-top: 1px solid rgba(218, 165, 32, 0.4);
+            transition: background 0.6s ease, color 0.6s ease, border-top 0.6s ease;
+        }
+
+        .chat-window.vip-theme .msg.bot {
+            background: #2a2410;
+            border: 1px solid rgba(218, 165, 32, 0.35);
+            color: #ffe8b0;
+            transition: background 0.6s ease, border 0.6s ease, color 0.6s ease;
+        }
+
+        .chat-window.vip-theme .msg.user {
+            background: linear-gradient(135deg, #B8860B, #DAA520);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(218, 165, 32, 0.4);
+            transition: background 0.6s ease, box-shadow 0.6s ease;
+        }
+
+        .chat-window.vip-theme .quick-reply-chip:not(.vip-chip) {
+            opacity: 0.7;
+            filter: saturate(0.5);
+        }
+
+        .vip-close-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #FFD700;
+            margin-left: 12px;
+            line-height: 1;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+            transition: transform 0.2s;
+        }
+        .chat-window.vip-theme .vip-close-btn {
+            display: inline-block;
+        }
+        .vip-close-btn:hover {
+            transform: scale(1.2);
+            text-shadow: 0 0 14px gold;
+        }
+
+        .vip-fireworks-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 200;
+            overflow: hidden;
+        }
+
+        .vip-particle {
+            position: absolute;
+            pointer-events: none;
+            font-size: 22px;
+            will-change: transform, opacity;
+            filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.9));
+            animation: particleGlow 0.8s ease-in-out infinite alternate;
+        }
+
+        @keyframes particleGlow {
+            0%   { filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.7)); }
+            100% { filter: drop-shadow(0 0 14px rgba(255, 215, 0, 1)) drop-shadow(0 0 22px rgba(255, 200, 0, 0.7)); }
+        }
+
+        .vip-spark {
+            position: absolute;
+            pointer-events: none;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #FFD700;
+            box-shadow: 0 0 6px #FFD700, 0 0 12px #FFA000;
+            will-change: transform, opacity;
+            animation: sparkTwinkle 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes sparkTwinkle {
+            0%   { opacity: 0.5; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.6); }
+        }
+
+        .vip-golden-rain {
+            position: absolute;
+            pointer-events: none;
+            font-size: 16px;
+            animation: goldenFall 2.5s linear forwards;
+            will-change: transform, opacity;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.8));
+        }
+
+        @keyframes goldenFall {
+            0%   { transform: translateY(-60px) rotate(0deg) scale(1); opacity: 1; }
+            70%  { opacity: 0.8; }
+            100% { transform: translateY(105vh) rotate(360deg) scale(0.3); opacity: 0; }
+        }
+
+        .chat-window.vip-theme::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 199;
+            background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.06) 0%, transparent 70%);
+            animation: goldenOverlayPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes goldenOverlayPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header-top">
+        <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
+        <a href="index.html" class="logo-container">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+        </a>
+        <div class="search-box">
+            <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
+            <button onclick="buscarSitio()">🔍 Buscar</button>
+        </div>
+    </header>
+
+    <!-- OFFCANVAS MENÚ -->
+    <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
+    <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
+        <div class="offcanvas-header">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="offcanvas-title">Menú Principal</div>
+            <button class="offcanvas-btn" onclick="window.location.href='index.html'">🏠 INICIO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='menu.html'">📋 MENÚ</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pedidos.html'">🛒 PEDIDOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pago.html'">💳 MÉTODOS DE PAGO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='horarios.html'">⏰ HORARIOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='contactanos.html'">📞 CONTÁCTANOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='trabaja.html'">💼 TRABAJA CON NOSOTROS</button>
+            <button class="offcanvas-btn active" onclick="window.location.href='chat.html'">💬 CHAT EN LÍNEA</button>
+            <button class="offcanvas-btn" onclick="window.location.href='nosotros.html'">👥 QUIÉNES SOMOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='registrate.html'">📝 REGÍSTRATE</button>
+            <button class="offcanvas-btn" onclick="window.location.href='ayuda.html'">❓ AYUDA</button>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+        <aside></aside>
+        <main class="content-center" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 80px;">
+            <button class="btn-open-chat" id="btnOpenChat" onclick="toggleChat()">🚀 ABRIR CHAT EN VIVO</button>
+            <span class="chat-invitation" id="chatInvite">💬 ¡Hola! ¿Hablamos de sabor?</span>
+        </main>
+        <aside>
+            <div class="side-card">
+                <h3>Acceso Clientes</h3>
+                <div class="login-form">
+                    <label>Usuario</label>
+                    <input type="text" id="userInput" placeholder="Usuario o Correo">
+                    <label>Contraseña</label>
+                    <input type="password" id="passInput" placeholder="Contraseña">
+                    <button class="btn-login" onclick="manejarLogin()">INICIAR SESIÓN</button>
+                    <div class="login-links">
+                        <a onclick="abrirModalRecuperar('pass')">Olvido su contraseña</a>
+                        <a onclick="abrirModalRecuperar('user')">Olvido su usuario</a>
+                        <a href="registrate.html">Regístrate</a>
+                    </div>
+                </div>
+            </div>
+            <div class="side-card">
+                <h3>Síguenos</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" title="Síguenos en Facebook"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="FB"></a>
+                    <a href="https://www.instagram.com" target="_blank" title="Síguenos en Instagram"><img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="IG"></a>
+                    <a href="https://www.tiktok.com" target="_blank" title="Síguenos en TikTok"><img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TK"></a>
+                    <a href="https://wa.me/573138205720" target="_blank" title="Escríbenos al WhatsApp"><img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA"></a>
+                </div>
+                <div class="map-container" style="margin-top: 15px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3977.0123!2d-74.1956!3d4.6097!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNMKwMzYnMzQuOSJOIDc0wrAxMSc0NC4yIlc!5e0!3m2!1ses!2sco!4v1614123456789!5m2!1ses!2sco" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="ubicacion-llamativa">
+                    <strong>📍 ¡VISÍTANOS EN NUESTRA SEDE PRINCIPAL!</strong>
+                    <p>CL 56 G NO 90B 59 SUR <br> Bosa, Bogotá</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- CHAT OFF-CANVAS -->
+    <div class="chat-offcanvas-overlay" id="chatOverlay" onclick="toggleChat()"></div>
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div class="chat-agent-avatar">👨‍🍳</div>
+            <div class="chat-agent-info">
+                <p class="chat-agent-name">Atención al Cliente</p>
+                <span class="chat-agent-status">
+                    <span class="status-dot"></span> En línea · Tiempo de Refrigerio
+                </span>
+            </div>
+            <button class="vip-close-btn" id="vipCloseBtn" onclick="desactivarModoVIP(true)" title="Salir del modo VIP">👑✕</button>
+            <button class="chat-header-close" onclick="toggleChat()">✕</button>
+        </div>
+
+        <div class="chat-messages" id="chatBox">
+            <div class="msg bot">
+                ¡Hola! Bienvenido a Tiempo de Refrigerio. 🌯 Soy tu asesor virtual. ¿En qué puedo ayudarte hoy para calmar ese antojo?
+                <span class="msg-time">ahora</span>
+            </div>
+        </div>
+
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <div class="quick-replies" id="quickReplies">
+            <button class="quick-reply-chip" onclick="sendQuickReply('Ver el menú')">🍽️ Menú</button>
+            <button class="quick-reply-chip" onclick="sendQuickReply('Hacer un pedido')">🛒 Pedido</button>
+            <button class="quick-reply-chip" onclick="sendQuickReply('Horarios de atención')">⏰ Horarios</button>
+            <button class="quick-reply-chip" onclick="sendQuickReply('Precios')">💰 Precios</button>
+            <button class="quick-reply-chip" onclick="sendQuickReply('Ubicación')">📍 Ubicación</button>
+            <button class="quick-reply-chip vip-chip" id="btnVipToggle" onclick="toggleModoVIP()" title="Activar/Desactivar experiencia VIP">👑 Asesor VIP</button>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="userInputChat" placeholder="Escribe tu mensaje aquí…" onkeypress="if(event.key === 'Enter') enviarMensajeChat()">
+            <button class="btn-send" onclick="enviarMensajeChat()">➤</button>
+        </div>
+
+        <div class="chat-footer-brand">
+            Servicio de chat de <span>Tiempo de Refrigerio</span> · Bogotá, Colombia
+        </div>
+    </div>
+
+    <!-- MODALES (mantenidos igual) -->
+    <div class="modal-overlay" id="modalGracias">
+        <div class="modal-box">
+            <div class="chulito-circular">✔</div>
+            <h2>¡Gracias por tu mensaje!</h2>
+            <p>Tu opinión es fundamental para seguir brindándote lo mejor de nuestra tradición.</p>
+            <button class="btn-modal-blue" onclick="location.reload()">GENERAR OTRA ENCUESTA</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalGracias')">CERRAR</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalBienvenida">
+        <div class="modal-box modal-vip">
+            <span class="vip-crown">👑</span>
+            <h2 id="tituloVIP">ACCESO EXCLUSIVO</h2>
+            <p id="msgBienvenida">Bienvenido a la experiencia VIP de Tiempo de Refrigerio.</p>
+            <div style="border-top: 1px solid var(--gold); margin: 15px 0; opacity: 0.3;"></div>
+            <button class="btn-vip" onclick="abrirExperienciaVIP()">EMPEZAR MI EXPERIENCIA</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalExperienciaVIP">
+        <div class="vip-experience-box">
+            <span class="vip-experience-close" onclick="cerrarExperienciaVIP()">✕</span>
+            <h2 class="vip-experience-title">¡TU EXPERIENCIA VIP TE ESPERA!</h2>
+            <p class="vip-experience-subtitle">Como cliente registrado, disfruta de estos beneficios exclusivos:</p>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(1)">
+                <span class="vip-benefit-icon">💳</span>
+                <div class="vip-benefit-text"><h4>Descuentos VIP</h4><p>Hasta 20% en combos y pedidos especiales</p></div>
+            </div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(2)">
+                <span class="vip-benefit-icon">🚀</span>
+                <div class="vip-benefit-text"><h4>Pedido Prioritario</h4><p>Entrega en menos de 20 minutos</p></div>
+            </div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(3)">
+                <span class="vip-benefit-icon">🎉</span>
+                <div class="vip-benefit-text"><h4>Eventos Exclusivos</h4><p>Invitaciones a catas y eventos privados</p></div>
+            </div>
+            <button class="btn-cerrar-vip-experience" onclick="cerrarExperienciaVIP()">CERRAR Y VOLVER</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalRecuperar">
+        <div class="modal-box">
+            <div class="info-circular">?</div>
+            <h2 id="tituloRecuperar">Recuperar Acceso</h2>
+            <p id="descRecuperar">Ingresa tu correo electrónico para enviarte las instrucciones.</p>
+            <input type="email" id="emailRecuperar" placeholder="tu-correo@ejemplo.com">
+            <button class="btn-modal-blue" onclick="enviarInstrucciones()">ENVIAR INSTRUCCIONES</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalRecuperar')">CANCELAR</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="modalInstrucciones">
+        <div class="modal-box">
+            <div class="chulito-circular">✉</div>
+            <h2>¡Correo Enviado!</h2>
+            <p>Hemos enviado los pasos a seguir a tu bandeja de entrada. Revisa también tu carpeta de SPAM.</p>
+            <button class="btn-modal-blue" onclick="cerrarModal('modalInstrucciones')">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">
+            © 2026 Tiempo de Refrigerio<br>
+            Todos los derechos reservados • Proyecto Multimedia<br>
+            Desarrollado con ❤️ en Bogotá, Colombia
+        </div>
+    </footer>
+
+    <script src="assets/js/scripts.js"></script>
+    <script>
+        let savedScrollY = 0;
+
+        function toggleChat() {
+            var chat = document.getElementById('chatWindow');
+            var overlay = document.getElementById('chatOverlay');
+            if (chat && overlay) {
+                var isCurrentlyOpen = chat.classList.contains('show');
+                chat.classList.toggle('show');
+                overlay.classList.toggle('show');
+
+                if (!isCurrentlyOpen) {
+                    savedScrollY = window.scrollY;
+                    document.body.classList.add('no-scroll');
+                    document.body.style.top = '-' + savedScrollY + 'px';
+                } else {
+                    document.body.classList.remove('no-scroll');
+                    document.body.style.top = '';
+                    window.scrollTo(0, savedScrollY);
+
+                    var box = document.getElementById('chatBox');
+                    if (box) {
+                        box.innerHTML = '<div class="msg bot">¡Hola! Bienvenido a Tiempo de Refrigerio. 🌯 Soy tu asesor virtual. ¿En qué puedo ayudarte hoy para calmar ese antojo?<span class="msg-time">ahora</span></div>';
+                    }
+                    var typing = document.getElementById('typingIndicator');
+                    if (typing) typing.classList.remove('show');
+                }
+            }
+        }
+
+        function sendQuickReply(texto) {
+            var input = document.getElementById('userInputChat');
+            if (input) {
+                input.value = texto;
+                enviarMensajeChat();
+            }
+        }
+
+        function enviarMensajeChat() {
+            var input = document.getElementById('userInputChat');
+            var box = document.getElementById('chatBox');
+            var typing = document.getElementById('typingIndicator');
+            if (!input || !box) return;
+            var texto = input.value.trim();
+            if (texto === '') return;
+
+            var msgUser = document.createElement('div');
+            msgUser.className = 'msg user';
+            msgUser.innerHTML = texto + '<span class="msg-time">ahora</span>';
+            box.appendChild(msgUser);
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+
+            if (typing) typing.classList.add('show');
+
+            setTimeout(function() {
+                if (typing) typing.classList.remove('show');
+                var respuesta;
+                if (window.vipModeEnabled) {
+                    respuesta = generarRespuestaVIP(texto);
+                } else {
+                    respuesta = generarRespuesta(texto);
+                }
+
+                var msgBot = document.createElement('div');
+                msgBot.className = 'msg bot';
+                msgBot.innerHTML = respuesta + '<span class="msg-time">ahora</span>';
+                box.appendChild(msgBot);
+                box.scrollTop = box.scrollHeight;
+            }, 1500);
+
+            input.focus();
+        }
+
+        function generarRespuesta(mensaje) {
+            var msg = mensaje.toLowerCase();
+            if (msg.includes('menú') || msg.includes('menu')) return 'Tenemos empanadas, buñuelos, arepas, pasteles, yuca, avena, tinto y mucho más. ¿Deseas ver la carta completa? 📋';
+            if (msg.includes('pedido')) return 'Puedes hacer tu pedido ahora mismo y lo alistamos rapidísimo. 🛒 ¿Qué se te antoja?';
+            if (msg.includes('horario')) return 'Atendemos de lunes a sábado de 6 a. m. a 11 p. m. y domingos de 8 a. m. a 10 p. m. ⏰';
+            if (msg.includes('precio')) return 'Los precios varían según el producto, pero siempre los más justos. ¿Algo en especial que quieras cotizar? 💰';
+            if (msg.includes('ubicación') || msg.includes('ubicacion')) return 'Estamos en CL 56 G #90B 59 Sur, Bosa, Bogotá. ¡Te esperamos! 📍';
+            return 'Gracias por escribirnos. 🙏 Pronto un asesor tomará el control de esta conversación. Mientras tanto, dime qué necesitas y te echo una mano.';
+        }
+
+        function generarRespuestaVIP(mensaje) {
+            var msg = mensaje.toLowerCase();
+            if (msg.includes('menú') || msg.includes('menu')) return '👑 <strong>Menú VIP</strong>: Accede a nuestra carta exclusiva con platos premium, combos  dorados  y muchas delicias mas... ¡Solo para ti! 🍽️✨';
+            if (msg.includes('pedido')) return '👑 <strong>Pedido VIP</strong>: Tu orden tendrá prioridad absoluta y entrega en tiempo récord. ¡Disfruta de un servicio 5 estrellas! 🛒🚀';
+            if (msg.includes('horario')) return '👑 <strong>Horario VIP</strong>: Como cliente preferencial, puedes ordenar incluso fuera del horario regular con nuestro servicio extendido. ⏰🌙';
+            if (msg.includes('precio')) return '👑 <strong>Precios VIP</strong>: ¡Hasta el 20% de descuento en combos y un 15% menos en pedidos especiales. 💰✨';
+            if (msg.includes('ubicación') || msg.includes('ubicacion')) return '👑 <strong>Ubicación VIP</strong>: Tenemos salón privado en nuestra sede principal (CL 56 G #90B 59 Sur) con atención personalizada. 📍🥂';
+            return '👑 Gracias por estar en VIP. Pronto un asesor especializado te atenderá. ¿Hay algo más en lo que pueda consentirte?';
+        }
+
+        /* ==================== FUNCIONALIDAD VIP ==================== */
+        window.vipModeEnabled = false;
+        var vipTimerGlobal = null;
+        var vipFireworksContainer = null;
+        var vipRainInterval = null;
+
+        function toggleModoVIP() {
+            if (window.vipModeEnabled) {
+                desactivarModoVIP(true);
+            } else {
+                activarModoVIP();
+            }
+        }
+
+        function activarModoVIP() {
+            var chatWindow = document.getElementById('chatWindow');
+            var box = document.getElementById('chatBox');
+            var inputChat = document.getElementById('userInputChat');
+            if (!chatWindow) return;
+            if (window.vipModeEnabled) return;
+
+            desactivarFuegosArtificiales();
+
+            window.vipModeEnabled = true;
+            chatWindow.classList.add('vip-theme');
+
+            // Limpiar el historial del chat
+            if (box) {
+                box.innerHTML = '<div class="msg bot">👑 <strong>Bienvenido a VIP</strong>, como cliente preferencial, tienes muchos beneficios y ventajas, descúbrelos. Pronto un asesor te atenderá. <em>Aplican términos y condiciones.</em><span class="msg-time">ahora</span></div>';
+            }
+
+            // Limpiar el campo de entrada (input)
+            if (inputChat) {
+                inputChat.value = '';
+            }
+
+            // Fuegos artificiales
+            vipFireworksContainer = document.createElement('div');
+            vipFireworksContainer.className = 'vip-fireworks-container';
+            vipFireworksContainer.id = 'vipFireworksContainer';
+            chatWindow.appendChild(vipFireworksContainer);
+
+            lanzarExplosion(vipFireworksContainer, 50, 200);
+            setTimeout(function() { lanzarExplosion(vipFireworksContainer, 40, 180); }, 1800);
+            setTimeout(function() { lanzarExplosion(vipFireworksContainer, 45, 200); }, 3400);
+            setTimeout(function() { lanzarExplosion(vipFireworksContainer, 35, 160); }, 5000);
+            setTimeout(function() { lanzarExplosion(vipFireworksContainer, 50, 200); }, 6400);
+
+            iniciarLluviaDorada(vipFireworksContainer);
+
+            vipTimerGlobal = setTimeout(function() {
+                desactivarFuegosArtificiales();
+            }, 8000);
+        }
+
+        function desactivarFuegosArtificiales() {
+            if (vipRainInterval) {
+                clearInterval(vipRainInterval);
+                vipRainInterval = null;
+            }
+            if (vipFireworksContainer && vipFireworksContainer.parentNode) {
+                while (vipFireworksContainer.firstChild) {
+                    vipFireworksContainer.removeChild(vipFireworksContainer.firstChild);
+                }
+                vipFireworksContainer.parentNode.removeChild(vipFireworksContainer);
+                vipFireworksContainer = null;
+            }
+            var residual = document.getElementById('vipFireworksContainer');
+            if (residual && residual.parentNode) {
+                while (residual.firstChild) residual.removeChild(residual.firstChild);
+                residual.parentNode.removeChild(residual);
+            }
+            if (vipTimerGlobal) {
+                clearTimeout(vipTimerGlobal);
+                vipTimerGlobal = null;
+            }
+        }
+
+        function desactivarModoVIP(limpiarTema) {
+            desactivarFuegosArtificiales();
+            if (limpiarTema) {
+                var chatWindow = document.getElementById('chatWindow');
+                var box = document.getElementById('chatBox');
+                var inputChat = document.getElementById('userInputChat');
+
+                if (chatWindow) chatWindow.classList.remove('vip-theme');
+                if (box) {
+                    box.innerHTML = '<div class="msg bot">¡Hola! Bienvenido a Tiempo de Refrigerio. 🌯 Soy tu asesor virtual. ¿En qué puedo ayudarte hoy para calmar ese antojo?<span class="msg-time">ahora</span></div>';
+                }
+                // Limpiar el campo de entrada al volver al chat normal
+                if (inputChat) {
+                    inputChat.value = '';
+                }
+                window.vipModeEnabled = false;
+            }
+        }
+
+        var originalToggleChat = toggleChat;
+        toggleChat = function() {
+            var chat = document.getElementById('chatWindow');
+            if (chat && chat.classList.contains('show')) {
+                desactivarModoVIP(true);
+            }
+            originalToggleChat();
+        };
+
+        function lanzarExplosion(container, cantidadParticulas, radioMax) {
+            if (!container || !container.parentNode) return;
+            var containerRect = container.getBoundingClientRect();
+            var centerX = containerRect.width * (0.25 + Math.random() * 0.5);
+            var centerY = containerRect.height * (0.2 + Math.random() * 0.5);
+            var estrellas = ['⭐', '✨', '🌟', '💫', '★', '✦', '✧', '⚝', '✶', '❋'];
+            var coloresDorados = ['#FFD700', '#FFC107', '#FFB300', '#FFA000', '#FFECB3', '#FFF176', '#FFAB00'];
+
+            for (var i = 0; i < cantidadParticulas; i++) {
+                var particula = document.createElement('span');
+                particula.className = 'vip-particle';
+                particula.textContent = estrellas[Math.floor(Math.random() * estrellas.length)];
+                particula.style.left = centerX + 'px';
+                particula.style.top = centerY + 'px';
+                particula.style.fontSize = (14 + Math.random() * 28) + 'px';
+                particula.style.color = coloresDorados[Math.floor(Math.random() * coloresDorados.length)];
+                particula.style.opacity = '1';
+                container.appendChild(particula);
+
+                var angulo = Math.random() * Math.PI * 2;
+                var distancia = 30 + Math.random() * radioMax;
+                var dx = Math.cos(angulo) * distancia;
+                var dy = Math.sin(angulo) * distancia;
+                var duracion = 800 + Math.random() * 1600;
+
+                particula.animate([
+                    { transform: 'translate(0, 0) scale(1) rotate(0deg)', opacity: 1 },
+                    { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(0.2) rotate(' + (Math.random() * 360) + 'deg)', opacity: 0 }
+                ], {
+                    duration: duracion,
+                    easing: 'cubic-bezier(0, 0.6, 0.35, 1)',
+                    fill: 'forwards'
+                }).onfinish = function() {
+                    if (particula.parentNode) particula.parentNode.removeChild(particula);
+                };
+            }
+
+            for (var j = 0; j < Math.floor(cantidadParticulas * 0.6); j++) {
+                var spark = document.createElement('div');
+                spark.className = 'vip-spark';
+                spark.style.left = centerX + 'px';
+                spark.style.top = centerY + 'px';
+                spark.style.width = (2 + Math.random() * 5) + 'px';
+                spark.style.height = spark.style.width;
+                spark.style.background = coloresDorados[Math.floor(Math.random() * coloresDorados.length)];
+                container.appendChild(spark);
+
+                var sAngulo = Math.random() * Math.PI * 2;
+                var sDistancia = 20 + Math.random() * radioMax * 1.1;
+                var sDx = Math.cos(sAngulo) * sDistancia;
+                var sDy = Math.sin(sAngulo) * sDistancia;
+                var sDuracion = 600 + Math.random() * 1200;
+
+                spark.animate([
+                    { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+                    { transform: 'translate(' + sDx + 'px, ' + sDy + 'px) scale(0)', opacity: 0 }
+                ], {
+                    duration: sDuracion,
+                    easing: 'cubic-bezier(0, 0.5, 0.4, 1)',
+                    fill: 'forwards'
+                }).onfinish = function() {
+                    if (spark.parentNode) spark.parentNode.removeChild(spark);
+                };
+            }
+        }
+
+        function iniciarLluviaDorada(container) {
+            if (!container || !container.parentNode) return;
+            var estrellasLluvia = ['✨', '⭐', '💛', '🌟', '⚝', '✦', '✧', '❋'];
+            vipRainInterval = setInterval(function() {
+                if (!container || !container.parentNode) {
+                    clearInterval(vipRainInterval);
+                    vipRainInterval = null;
+                    return;
+                }
+                var containerRect = container.getBoundingClientRect();
+                var gota = document.createElement('span');
+                gota.className = 'vip-golden-rain';
+                gota.textContent = estrellasLluvia[Math.floor(Math.random() * estrellasLluvia.length)];
+                gota.style.left = Math.random() * containerRect.width + 'px';
+                gota.style.top = '-40px';
+                gota.style.fontSize = (12 + Math.random() * 18) + 'px';
+                gota.style.animationDuration = (1.5 + Math.random() * 3) + 's';
+                container.appendChild(gota);
+                setTimeout(function() {
+                    if (gota.parentNode) gota.parentNode.removeChild(gota);
+                }, 3500);
+            }, 200);
+        }
+    </script>
+</body>
+</html>

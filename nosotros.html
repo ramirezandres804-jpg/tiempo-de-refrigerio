@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiénes Somos | Tiempo de Refrigerio</title>
+    <link rel="stylesheet" href="assets/css/estilos.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header-top">
+        <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
+        <a href="index.html" class="logo-container">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+        </a>
+        <div class="search-box">
+            <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
+            <button onclick="buscarSitio()">🔍 Buscar</button>
+        </div>
+    </header>
+
+    <!-- OFFCANVAS MENÚ -->
+    <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
+    <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
+        <div class="offcanvas-header">
+            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="offcanvas-title">Menú Principal</div>
+            <button class="offcanvas-btn" onclick="window.location.href='index.html'">🏠 INICIO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='menu.html'">📋 MENÚ</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pedidos.html'">🛒 PEDIDOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='pago.html'">💳 MÉTODOS DE PAGO</button>
+            <button class="offcanvas-btn" onclick="window.location.href='horarios.html'">⏰ HORARIOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='contactanos.html'">📞 CONTÁCTANOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='trabaja.html'">💼 TRABAJA CON NOSOTROS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='chat.html'">💬 CHAT EN LÍNEA</button>
+            <button class="offcanvas-btn active" onclick="window.location.href='nosotros.html'">👥 QUIÉNES SOMOS</button>
+            <button class="offcanvas-btn" onclick="window.location.href='registrate.html'">📝 REGÍSTRATE</button>
+            <button class="offcanvas-btn" onclick="window.location.href='ayuda.html'">❓ AYUDA</button>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+        <aside>
+            <button class="btn-toggle-buzon" onclick="toggleBuzon()">ABRIR BUZÓN DE OPINIONES ⭐</button>
+            <div class="buzon-card" id="miBuzon">
+                <div class="buzon-header"> CALIFICA TU EXPERIENCIA <span onclick="toggleBuzon()" style="cursor:pointer">✖</span> </div>
+                <div class="encuesta-body">
+                    <div id="preguntas-contenedor"></div>
+                    <textarea id="opinionTexto" placeholder="Déjanos tus comentarios adicionales aquí..."></textarea>
+                    <button class="btn-enviar" onclick="enviarEncuesta()">ENVIAR CALIFICACIÓN 🚀</button>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content-center">
+            <h1>CONÓCENOS: NUESTRA ESENCIA</h1>
+
+            <section class="info-section">
+                <h2>📍 NUESTRA MISIÓN</h2>
+                <p>En <strong>Tiempo de Refrigerio</strong>, nuestra misión es transformar cada pausa en una experiencia gastronómica excepcional. Nos dedicamos a ofrecer productos artesanales de alta calidad con un servicio cercano y eficiente, garantizando que cada bocado sea un momento de deleite único para nuestra comunidad bogotana.</p>
+            </section>
+
+            <section class="info-section">
+                <h2>🚀 NUESTRA VISIÓN</h2>
+                <p>Para el año 2029, proyectamos consolidarnos como el principal referente de refrigerios y snacks premium en la región. Buscamos liderar el mercado a través de la innovación constante en nuestro menú y la excelencia en el servicio, creciendo de la mano con nuestros clientes y manteniendo siempre nuestro sello de sabor tradicional.</p>
+            </section>
+
+            <section class="info-section">
+                <h2>🎬 MIRA NUESTRAS DELICIAS EN ACCIÓN:</h2>
+                <div class="video-container">
+                    <a href="https://www.youtube.com/watch?v=ke_d8XZds3I" target="_blank" class="video-wrapper video-main-box">
+                        <div class="play-button"></div>
+                        <img src="https://img.youtube.com/vi/ke_d8XZds3I/hqdefault.jpg" alt="Video Principal">
+                    </a>
+                    <div class="video-grid">
+                        <a href="https://www.youtube.com/watch?v=HXG0z42cwsU" target="_blank" class="video-wrapper video-secondary-box">
+                            <div class="play-button"></div>
+                            <img src="https://img.youtube.com/vi/HXG0z42cwsU/hqdefault.jpg" alt="Video Proceso 1">
+                        </a>
+                        <a href="https://www.youtube.com/watch?v=Y97bj2A4VfY" target="_blank" class="video-wrapper video-secondary-box">
+                            <div class="play-button"></div>
+                            <img src="https://img.youtube.com/vi/Y97bj2A4VfY/hqdefault.jpg" alt="Video Proceso 2">
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <a href="menu.html" class="btn-ver-menu">🛒 VER MENÚ COMPLETO</a>
+        </main>
+
+        <aside>
+            <div class="side-card">
+                <h3>Acceso Clientes</h3>
+                <div class="login-form">
+                    <label>Usuario</label>
+                    <input type="text" id="userInput" placeholder="Usuario o Correo">
+                    <label>Contraseña</label>
+                    <input type="password" id="passInput" placeholder="Contraseña">
+                    <button class="btn-login" onclick="manejarLogin()">INICIAR SESIÓN</button>
+                    <div class="login-links">
+                        <a onclick="abrirModalRecuperar('pass')">Olvido su contraseña</a>
+                        <a onclick="abrirModalRecuperar('user')">Olvido su usuario</a>
+                        <a href="registrate.html">Regístrate</a>
+                    </div>
+                </div>
+            </div>
+            <div class="side-card">
+                <h3>Síguenos</h3>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com" target="_blank" title="Síguenos en Facebook">
+                        <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="FB">
+                    </a>
+                    <a href="https://www.instagram.com" target="_blank" title="Síguenos en Instagram">
+                        <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" alt="IG">
+                    </a>
+                    <a href="https://www.tiktok.com" target="_blank" title="Síguenos en TikTok">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3046/3046121.png" alt="TK">
+                    </a>
+                    <a href="https://wa.me/573138205720" target="_blank" title="Escríbenos al WhatsApp">
+                        <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WA">
+                    </a>
+                </div>
+                <div class="map-container" style="margin-top: 15px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3977.06282855135!2d-74.19500000000001!3d4.583000000000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9e2051939103%3A0xc174094191a67761!2sBosa%2C%20Bogot%C3%A1!5e0!3m2!1ses!2sco!4v1700000000000" width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="ubicacion-llamativa">
+                    <strong>📍 ¡VISÍTANOS EN NUESTRA SEDE PRINCIPAL!</strong>
+                    <p>CL 56 G NO 90B 59 SUR <br> Bosa, Bogotá</p>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- MODALES -->
+    <div class="modal-overlay" id="modalGracias">
+        <div class="modal-box">
+            <div class="chulito-circular">✔</div>
+            <h2>¡Gracias por tu mensaje!</h2>
+            <p>Tu opinión es fundamental para seguir brindándote lo mejor de nuestra tradición.</p>
+            <button class="btn-modal-blue" onclick="location.reload()">GENERAR OTRA ENCUESTA</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalGracias')">CERRAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalBienvenida">
+        <div class="modal-box modal-vip">
+            <span class="vip-crown">👑</span>
+            <h2 id="tituloVIP">ACCESO EXCLUSIVO</h2>
+            <p id="msgBienvenida">Bienvenido a la experiencia VIP de Tiempo de Refrigerio.</p>
+            <div style="border-top: 1px solid var(--gold); margin: 15px 0; opacity: 0.3;"></div>
+            <button class="btn-vip" onclick="abrirExperienciaVIP()">EMPEZAR MI EXPERIENCIA</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalExperienciaVIP">
+        <div class="vip-experience-box">
+            <span class="vip-experience-close" onclick="cerrarExperienciaVIP()">✕</span>
+            <h2 class="vip-experience-title">¡TU EXPERIENCIA VIP TE ESPERA!</h2>
+            <p class="vip-experience-subtitle">Como cliente registrado, disfruta de estos beneficios exclusivos:</p>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(1)">
+                <span class="vip-benefit-icon">💳</span>
+                <div class="vip-benefit-text"><h4>Descuentos VIP</h4><p>Hasta 20% en combos y pedidos especiales</p></div>
+            </div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(2)">
+                <span class="vip-benefit-icon">🚀</span>
+                <div class="vip-benefit-text"><h4>Pedido Prioritario</h4><p>Entrega en menos de 20 minutos</p></div>
+            </div>
+            <div class="vip-benefit-card" onclick="seleccionarOpcionVIP(3)">
+                <span class="vip-benefit-icon">🎉</span>
+                <div class="vip-benefit-text"><h4>Eventos Exclusivos</h4><p>Invitaciones a catas y eventos privados</p></div>
+            </div>
+            <button class="btn-cerrar-vip-experience" onclick="cerrarExperienciaVIP()">CERRAR Y VOLVER</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalRecuperar">
+        <div class="modal-box">
+            <div class="info-circular">?</div>
+            <h2 id="tituloRecuperar">Recuperar Acceso</h2>
+            <p id="descRecuperar">Ingresa tu correo electrónico para enviarte las instrucciones.</p>
+            <input type="email" id="emailRecuperar" placeholder="tu-correo@ejemplo.com">
+            <button class="btn-modal-blue" onclick="enviarInstrucciones()">ENVIAR INSTRUCCIONES</button>
+            <button class="btn-modal-gray" onclick="cerrarModal('modalRecuperar')">CANCELAR</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalInstrucciones">
+        <div class="modal-box">
+            <div class="chulito-circular">✉</div>
+            <h2>¡Correo Enviado!</h2>
+            <p>Hemos enviado los pasos a seguir a tu bandeja de entrada. Revisa también tu carpeta de SPAM.</p>
+            <button class="btn-modal-blue" onclick="cerrarModal('modalInstrucciones')">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-bottom">
+            © 2026 Tiempo de Refrigerio<br>
+            Todos los derechos reservados • Proyecto Multimedia<br>
+            Desarrollado con ❤️ en Bogotá, Colombia
+        </div>
+    </footer>
+
+    <script src="assets/js/scripts.js"></script>
+</body>
+</html>
