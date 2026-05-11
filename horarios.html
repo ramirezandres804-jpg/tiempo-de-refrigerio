@@ -336,14 +336,23 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(255,101,0,0.4);
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s; /* Se añade background a la transición */
             display: inline-block;
             text-decoration: none;
         }
 
+        /* ✅ NUEVO: Cambio de color al pasar el cursor */
         .btn-desplegar-horarios:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 25px rgba(255,101,0,0.6);
+            background: linear-gradient(135deg, #ffa500, #ff7f00); /* Naranja más brillante */
+        }
+
+        /* ✅ NUEVO: Cambio de color al hacer clic (active) */
+        .btn-desplegar-horarios:active {
+            transform: translateY(0px);
+            box-shadow: 0 4px 10px rgba(255,101,0,0.5);
+            background: linear-gradient(135deg, #ff7f00, #e65c00); /* Más oscuro al presionar */
         }
     </style>
 </head>
@@ -591,4 +600,4 @@
         })();
     </script>
 </body>
-</html>
+</html> 
