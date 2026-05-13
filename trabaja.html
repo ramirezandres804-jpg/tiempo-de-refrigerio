@@ -171,7 +171,64 @@
         .fp-footer {
             flex-shrink: 0 !important;
         }
-        /* ==================== FIN FIX ==================== */
+        
+        /* ==================== COLOR NARANJA ULTRA FUERTE - MÁXIMA PRIORIDAD ==================== */
+        p[style*="color: #FF3300"] {
+            color: #FF3300 !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+        }
+        
+        .trabaja-cta-bar p {
+            color: #FF3300 !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+        }
+
+        .cta-bar-text p {
+            color: #FF3300 !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+        }
+        
+        main .cta-bar-text p {
+            color: #FF3300 !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+        }
+
+        .content-center .trabaja-cta-bar .cta-bar-text p {
+            color: #FF3300 !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+        }
+        
+        body main .cta-bar-text p {
+            color: #FF3300 !important;
+            font-weight: bold !important;
+            font-size: 16px !important;
+        }
+        /* ==================== FIN NARANJA ==================== */
+
+        /* ==================== OFF CANVAS: TIPO DE DOCUMENTO EN MODO OSCURO ==================== */
+        [data-theme="dark"] #job_tipo_doc {
+            color: #000 !important;
+        }
+
+        /* ==================== OFF CANVAS: TODOS LOS CAMPOS DEL FORMULARIO EN MODO OSCURO ==================== */
+        /* Garantiza que cualquier texto escrito sea visible (blanco sobre fondo oscuro) */
+        [data-theme="dark"] #formPanel input[type="text"],
+        [data-theme="dark"] #formPanel input[type="email"],
+        [data-theme="dark"] #formPanel textarea,
+        [data-theme="dark"] #formPanel select {
+            color: #ffffff !important;
+            background-color: #2a2a2a !important;
+            border-color: #444 !important;
+        }
+        [data-theme="dark"] #formPanel input::placeholder,
+        [data-theme="dark"] #formPanel textarea::placeholder {
+            color: #999 !important;
+        }
     </style>
 </head>
 <body>
@@ -184,6 +241,13 @@
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
+        <!-- Botón de tema oscuro/claro -->
+<button class="theme-toggle-btn" 
+        id="themeToggle" 
+        data-tooltip="Modo oscuro" 
+        aria-label="Cambiar tema">
+    🌙
+</button>
     </header>
 
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
@@ -289,8 +353,8 @@
             <div class="trabaja-cta-bar">
                 <span class="cta-bar-icon">🚀</span>
                 <div class="cta-bar-text">
-                    <strong>¿Listo para dar el siguiente paso?</strong>
-                    <p>Completa tu solicitud en menos de 3 minutos. ¡Te esperamos!</p>
+                    <strong style="color: #FF6600;">¿Listo para dar el siguiente paso?</strong>
+                    <p style="color: #FF3300 !important; font-weight: bold !important; font-size: 16px !important;">Completa tu solicitud en menos de 3 minutos. ¡Te esperamos!</p>
                 </div>
                 <button class="btn-cta-bar" onclick="abrirFormPanel()">
                     ENVIAR MI SOLICITUD ➔
@@ -616,7 +680,7 @@
             limpiarCampo('job_num_doc');
         });
 
-        // Validación en tiempo real del número de documento
+        // Validación en tiempo real del número de documento (AHORA OBLIGATORIO)
         jobNumDoc.addEventListener('input', function() {
             var tipo = jobTipoDoc.value;
             if (tipo === 'PA') {
@@ -631,7 +695,8 @@
             }
             var valor = this.value;
             if (valor.length === 0) {
-                limpiarCampo('job_num_doc');
+                // Campo vacío: ahora muestra error inmediatamente
+                mostrarError('job_num_doc', 'Número de documento requerido.');
             } else if (valor.length < 5) {
                 mostrarError('job_num_doc', 'Mínimo 5 caracteres.');
             } else {
@@ -741,19 +806,23 @@
             if (nombre === '' || /[^A-Za-zÁáÉéÍíÓóÚúÜüÑñ\s]/.test(nombre)) mostrarError('job_nombre', 'Nombre inválido.');
             else mostrarExito('job_nombre');
 
-            // Validar número de documento
+            // Validar número de documento (AHORA OBLIGATORIO)
             var docError = false;
             if (numDoc.length === 0) {
-                mostrarError('job_num_doc', 'El número de documento es obligatorio.');
-                docError = true;
-            } else if (tipoDoc !== 'PA' && /[^0-9]/.test(numDoc)) {
-                mostrarError('job_num_doc', 'Solo se permiten números para este tipo de documento.');
-                docError = true;
-            } else if (numDoc.length < 5) {
-                mostrarError('job_num_doc', 'Mínimo 5 caracteres.');
+                // Si está vacío, error obligatorio
+                mostrarError('job_num_doc', 'Número de documento requerido.');
                 docError = true;
             } else {
-                mostrarExito('job_num_doc');
+                // Validaciones adicionales según tipo
+                if (tipoDoc !== 'PA' && /[^0-9]/.test(numDoc)) {
+                    mostrarError('job_num_doc', 'Solo se permiten números para este tipo de documento.');
+                    docError = true;
+                } else if (numDoc.length < 5) {
+                    mostrarError('job_num_doc', 'Mínimo 5 caracteres.');
+                    docError = true;
+                } else {
+                    mostrarExito('job_num_doc');
+                }
             }
 
             // Email

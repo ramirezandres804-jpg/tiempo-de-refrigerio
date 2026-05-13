@@ -161,6 +161,13 @@
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
+        <!-- Botón de tema oscuro/claro -->
+<button class="theme-toggle-btn" 
+        id="themeToggle" 
+        data-tooltip="Modo oscuro" 
+        aria-label="Cambiar tema">
+    🌙
+</button>
     </header>
 
     <!-- OFFCANVAS MENÚ -->
@@ -361,33 +368,28 @@
 
     <script src="assets/js/scripts.js"></script>
     <script>
-        let scrollYPosition = 0;
-
+        // ========== PANEL DE SOLUCIONES SIN BLOQUEO DE SCROLL ==========
         function toggleSoluciones() {
             var panel = document.getElementById('chatContainer');
             var overlay = document.getElementById('offcanvasOverlaySoluciones');
-            if (panel && overlay) {
-                var isOpen = panel.classList.toggle('show');
-                overlay.classList.toggle('show');
+            if (!panel || !overlay) return;
 
-                if (isOpen) {
-                    var options = document.getElementById('chatOptions');
-                    var footer = document.getElementById('chatFooter');
-                    if (options) options.style.display = 'flex';
-                    if (footer) footer.style.display = 'none';
-                    var body = document.getElementById('chatBody');
-                    if (body) body.innerHTML = '';
+            var isOpen = panel.classList.toggle('show');
+            overlay.classList.toggle('show');
 
-                    scrollYPosition = window.scrollY;
-                    document.body.classList.add('no-scroll');
-                    document.body.style.top = '-' + scrollYPosition + 'px';
-                } else {
-                    document.body.classList.remove('no-scroll');
-                    document.body.style.top = '';
-                    window.scrollTo(0, scrollYPosition);
-                    var body = document.getElementById('chatBody');
-                    if (body) body.innerHTML = '';
-                }
+            if (isOpen) {
+                // Al abrir, mostrar opciones y ocultar el footer de escritura
+                var options = document.getElementById('chatOptions');
+                var footer = document.getElementById('chatFooter');
+                if (options) options.style.display = 'flex';
+                if (footer) footer.style.display = 'none';
+                var body = document.getElementById('chatBody');
+                if (body) body.innerHTML = '';
+                // No se bloquea el scroll del body
+            } else {
+                // Al cerrar, limpiar el área de mensajes
+                var body = document.getElementById('chatBody');
+                if (body) body.innerHTML = '';
             }
         }
 
@@ -447,6 +449,23 @@
             if (footer) footer.style.display = 'none';
             if (options) options.style.display = 'flex';
         }
+
+        // ========== ASEGURAR QUE EL MENÚ LATERAL NO BLOQUEE EL SCROLL ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof toggleOffcanvas === 'function') {
+                var originalToggleOffcanvas = toggleOffcanvas;
+                toggleOffcanvas = function() {
+                    originalToggleOffcanvas();
+                    // Eliminar cualquier restricción de scroll que haya aplicado
+                    document.body.classList.remove('no-scroll');
+                    document.body.style.top = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
+                    document.body.style.height = '';
+                    document.body.style.overflow = '';
+                };
+            }
+        });
     </script>
 </body>
 </html>

@@ -277,6 +277,13 @@
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
+        <!-- Botón de tema oscuro/claro -->
+<button class="theme-toggle-btn" 
+        id="themeToggle" 
+        data-tooltip="Modo oscuro" 
+        aria-label="Cambiar tema">
+    🌙
+</button>
     </header>
 
     <!-- OFFCANVAS MENÚ -->
@@ -461,8 +468,7 @@
 
     <script src="assets/js/scripts.js"></script>
     <script>
-        let savedScrollY = 0;
-
+        // ========== CHAT OFF‑CANVAS SIN BLOQUEO DE SCROLL ==========
         function toggleChat() {
             var chat = document.getElementById('chatWindow');
             var overlay = document.getElementById('chatOverlay');
@@ -471,15 +477,8 @@
                 chat.classList.toggle('show');
                 overlay.classList.toggle('show');
 
-                if (!isCurrentlyOpen) {
-                    savedScrollY = window.scrollY;
-                    document.body.classList.add('no-scroll');
-                    document.body.style.top = '-' + savedScrollY + 'px';
-                } else {
-                    document.body.classList.remove('no-scroll');
-                    document.body.style.top = '';
-                    window.scrollTo(0, savedScrollY);
-
+                // Si se está cerrando el chat, restablecer historial y limpiar typing
+                if (isCurrentlyOpen) {
                     var box = document.getElementById('chatBox');
                     if (box) {
                         box.innerHTML = '<div class="msg bot">¡Hola! Bienvenido a Tiempo de Refrigerio. 🌯 Soy tu asesor virtual. ¿En qué puedo ayudarte hoy para calmar ese antojo?<span class="msg-time">ahora</span></div>';
@@ -490,6 +489,7 @@
             }
         }
 
+        // ========== RESPUESTAS RÁPIDAS Y ENVÍO DE MENSAJES ==========
         function sendQuickReply(texto) {
             var input = document.getElementById('userInputChat');
             if (input) {
@@ -546,7 +546,7 @@
 
         function generarRespuestaVIP(mensaje) {
             var msg = mensaje.toLowerCase();
-            if (msg.includes('menú') || msg.includes('menu')) return '👑 <strong>Menú VIP</strong>: Accede a nuestra carta exclusiva con platos premium, combos  dorados  y muchas delicias mas... ¡Solo para ti! 🍽️✨';
+            if (msg.includes('menú') || msg.includes('menu')) return '👑 <strong>Menú VIP</strong>: Accede a nuestra carta exclusiva con platos premium, combos dorados y muchas delicias más... ¡Solo para ti! 🍽️✨';
             if (msg.includes('pedido')) return '👑 <strong>Pedido VIP</strong>: Tu orden tendrá prioridad absoluta y entrega en tiempo récord. ¡Disfruta de un servicio 5 estrellas! 🛒🚀';
             if (msg.includes('horario')) return '👑 <strong>Horario VIP</strong>: Como cliente preferencial, puedes ordenar incluso fuera del horario regular con nuestro servicio extendido. ⏰🌙';
             if (msg.includes('precio')) return '👑 <strong>Precios VIP</strong>: ¡Hasta el 20% de descuento en combos y un 15% menos en pedidos especiales. 💰✨';
@@ -651,6 +651,7 @@
             }
         }
 
+        // Al cerrar el chat se desactiva el modo VIP automáticamente
         var originalToggleChat = toggleChat;
         toggleChat = function() {
             var chat = document.getElementById('chatWindow');
@@ -749,6 +750,23 @@
                 }, 3500);
             }, 200);
         }
+
+        // ========== ASEGURAR QUE EL MENÚ LATERAL NO BLOQUEE EL SCROLL ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof toggleOffcanvas === 'function') {
+                var originalToggleOffcanvas = toggleOffcanvas;
+                toggleOffcanvas = function() {
+                    originalToggleOffcanvas();
+                    // Eliminar cualquier clase o estilo que bloquee el scroll
+                    document.body.classList.remove('no-scroll');
+                    document.body.style.top = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
+                    document.body.style.height = '';
+                    document.body.style.overflow = '';
+                };
+            }
+        });
     </script>
 </body>
 </html>

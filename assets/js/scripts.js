@@ -13,6 +13,48 @@ const dominiosValidos = [
     'sena.edu.co', 'misena.edu.co', 'edu.co'
 ];
 
+// ============================================================
+// 🌙 LÓGICA DEL BOTÓN DE TEMA OSCURO / CLARO
+// ============================================================
+function inicializarTema() {
+    const themeToggle = document.getElementById('themeToggle');
+    if (!themeToggle) return;
+
+    // Aplicar tema guardado al cargar la página
+    const temaGuardado = localStorage.getItem('tema');
+    if (temaGuardado === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        themeToggle.innerHTML = '☀️';
+        themeToggle.setAttribute('data-tooltip', 'Modo claro');
+    } else {
+        document.body.removeAttribute('data-theme');
+        themeToggle.innerHTML = '🌙';
+        themeToggle.setAttribute('data-tooltip', 'Modo oscuro');
+    }
+
+    // Alternar tema al hacer clic
+    themeToggle.addEventListener('click', function() {
+        const esOscuro = document.body.hasAttribute('data-theme');
+        
+        if (esOscuro) {
+            // Cambiar a modo claro
+            document.body.removeAttribute('data-theme');
+            themeToggle.innerHTML = '🌙';
+            themeToggle.setAttribute('data-tooltip', 'Modo oscuro');
+            localStorage.setItem('tema', 'light');
+        } else {
+            // Cambiar a modo oscuro
+            document.body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '☀️';
+            themeToggle.setAttribute('data-tooltip', 'Modo claro');
+            localStorage.setItem('tema', 'dark');
+        }
+    });
+}
+// ============================================================
+// FIN LÓGICA DEL BOTÓN DE TEMA OSCURO / CLARO
+// ============================================================
+
 // ----- OFF CANVAS MENÚ -----
 function toggleOffcanvas() {
     const menu = document.getElementById('offcanvasMenu');
@@ -894,6 +936,7 @@ document.addEventListener('DOMContentLoaded', function() {
     generarPreguntasBuzon();
     unificarBotonBusqueda();
     enlazarMapaReal();
+    inicializarTema(); // 🌙 Inicializar la lógica del botón de tema
 
     // ✅ AJUSTE ÚNICO: Aclarar que el comentario es opcional en el buzón
     const textareaOpinion = document.getElementById('opinionTexto');
@@ -939,8 +982,9 @@ document.addEventListener('DOMContentLoaded', function() {
         recordarWrapper.style.marginTop = '8px';
         recordarWrapper.style.cursor = 'pointer';
         recordarWrapper.style.fontSize = '0.9em';
-        recordarWrapper.style.color = '#444';
-        
+        // recordarWrapper.style.color = '#444';   // ❌ ELIMINADO para que el CSS controle el color
+        recordarWrapper.classList.add('recordar-label'); // 🔥 NUEVO: clase para tema oscuro
+
         const checkRecordar = document.createElement('input');
         checkRecordar.type = 'checkbox';
         checkRecordar.id = 'recordarContrasenaCheck';

@@ -156,6 +156,28 @@
         .fecha-input-wrapper input[type="date"] {
             padding-right: 30px;
         }
+
+        /* ==================== OFF CANVAS REGISTRO: MODO OSCURO ==================== */
+        /* Select de Tipo de Documento */
+        [data-theme="dark"] #regTipoDoc {
+            color: #000 !important;
+        }
+
+        /* Todos los campos de texto, email, password, select y textarea */
+        [data-theme="dark"] #mainRegistro input[type="text"],
+        [data-theme="dark"] #mainRegistro input[type="email"],
+        [data-theme="dark"] #mainRegistro input[type="password"],
+        [data-theme="dark"] #mainRegistro input[type="date"],
+        [data-theme="dark"] #mainRegistro select,
+        [data-theme="dark"] #mainRegistro textarea {
+            color: #ffffff !important;
+            background-color: #2a2a2a !important;
+            border-color: #444 !important;
+        }
+        [data-theme="dark"] #mainRegistro input::placeholder,
+        [data-theme="dark"] #mainRegistro textarea::placeholder {
+            color: #999 !important;
+        }
     </style>
 </head>
 <body>
@@ -168,6 +190,13 @@
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
+        <!-- Botón de tema oscuro/claro -->
+<button class="theme-toggle-btn" 
+        id="themeToggle" 
+        data-tooltip="Modo oscuro" 
+        aria-label="Cambiar tema">
+    🌙
+</button>
     </header>
 
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
@@ -425,7 +454,22 @@
 
     <script src="assets/js/scripts.js"></script>
     <script>
-        let scrollRegistroY = 0;
+        // ========== FUNCIÓN TOGGLE REGISTRO SIN BLOQUEO DE SCROLL ==========
+        function toggleRegistro() {
+            var panel = document.getElementById('registroContainer');
+            var overlay = document.getElementById('offcanvasOverlayRegistro');
+            if (panel && overlay) {
+                var isCurrentlyOpen = panel.classList.contains('show');
+                panel.classList.toggle('show');
+                overlay.classList.toggle('show');
+
+                // Si se cerró el panel, limpiar el formulario
+                if (isCurrentlyOpen) {
+                    limpiarTodo();
+                }
+                // NO se bloquea el scroll del body
+            }
+        }
 
         function mostrarErrorReg(id, mensaje) {
             var el = document.getElementById(id);
@@ -524,27 +568,6 @@
             clearTimeout(window.userHintTimeout);
             window.passHintTimeout = null;
             window.userHintTimeout = null;
-        }
-
-        function toggleRegistro() {
-            var panel = document.getElementById('registroContainer');
-            var overlay = document.getElementById('offcanvasOverlayRegistro');
-            if (panel && overlay) {
-                var isCurrentlyOpen = panel.classList.contains('show');
-                panel.classList.toggle('show');
-                overlay.classList.toggle('show');
-
-                if (!isCurrentlyOpen) {
-                    scrollRegistroY = window.scrollY;
-                    document.body.classList.add('no-scroll');
-                    document.body.style.top = '-' + scrollRegistroY + 'px';
-                } else {
-                    document.body.classList.remove('no-scroll');
-                    document.body.style.top = '';
-                    window.scrollTo(0, scrollRegistroY);
-                    limpiarTodo();
-                }
-            }
         }
 
         // ── Configurar límites realistas en el campo de fecha ──
@@ -818,105 +841,157 @@
             }
         });
 
-        function validarYRegistrar() {
-            // Validar nombre
-            var nombre = document.getElementById('regNombre');
-            if (nombre.value.trim() === '' || /[^A-Za-zÁáÉéÍíÓóÚúÜüÑñ\s]/.test(nombre.value)) {
-                mostrarErrorReg('regNombre', 'Nombre inválido.');
-            } else mostrarExitoReg('regNombre');
+        // ========== ★ NUEVO: Validación en tiempo real al perder el foco (blur) en cada campo obligatorio ★ ==========
+        // Muestra "Este campo es obligatorio" si el usuario sale del campo sin llenarlo
+        function validarCampoObligatorioBlur(id, nombreCampo) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    mostrarErrorReg(id, nombreCampo + ' es obligatorio.');
+                }
+            });
+        }
 
-            // Validar número de documento
+        // Aplicar blur a todos los campos obligatorios
+        validarCampoObligatorioBlur('regNombre', 'El nombre completo');
+        validarCampoObligatorioBlur('regNumDoc', 'El número de documento');
+        validarCampoObligatorioBlur('regFechaNac', 'La fecha de nacimiento');
+        validarCampoObligatorioBlur('regUser', 'El nombre de usuario');
+        validarCampoObligatorioBlur('regTel', 'El teléfono');
+        validarCampoObligatorioBlur('regEmail', 'El correo electrónico');
+        validarCampoObligatorioBlur('regPass', 'La contraseña');
+        validarCampoObligatorioBlur('regPassConfirm', 'Confirmar la contraseña');
+
+        // ========== ★ REESCRITO: validarYRegistrar() - todos los campos obligatorios, bloqueo total si hay errores ★ ==========
+        function validarYRegistrar() {
+            var hayError = false;
+
+            // ── Validar nombre (obligatorio) ──
+            var nombreVal = document.getElementById('regNombre').value;
+            if (nombreVal.trim() === '') {
+                mostrarErrorReg('regNombre', 'El nombre completo es obligatorio.');
+                hayError = true;
+            } else if (/[^A-Za-zÁáÉéÍíÓóÚúÜüÑñ\s]/.test(nombreVal)) {
+                mostrarErrorReg('regNombre', 'Solo se permiten letras y espacios.');
+                hayError = true;
+            } else {
+                mostrarExitoReg('regNombre');
+            }
+
+            // ── Validar número de documento (AHORA OBLIGATORIO) ──
             var numDocRaw = document.getElementById('regNumDoc').value.trim();
             var tipoDoc = document.getElementById('regTipoDoc').value;
-            var docError = false;
-            if (numDocRaw.length === 0) {
+            if (numDocRaw === '') {
                 mostrarErrorReg('regNumDoc', 'El número de documento es obligatorio.');
-                docError = true;
+                hayError = true;
             } else if (tipoDoc !== 'PA' && /[^0-9]/.test(numDocRaw)) {
                 mostrarErrorReg('regNumDoc', 'Solo se permiten números para este tipo de documento.');
-                docError = true;
+                hayError = true;
             } else if (numDocRaw.length < 5) {
                 mostrarErrorReg('regNumDoc', 'Mínimo 5 caracteres.');
-                docError = true;
+                hayError = true;
             } else {
                 mostrarExitoReg('regNumDoc');
             }
 
-            // Validar fecha de nacimiento
+            // ── Validar fecha de nacimiento (obligatorio) ──
+            var fechaVal = document.getElementById('regFechaNac').value;
             var fechaValida = validarFechaNacimiento();
-
-            // Validar usuario
-            var user = document.getElementById('regUser');
-            var userVal = user.value.trim();
-            var userError = '';
-            if (userVal === '') userError = 'Usuario requerido.';
-            else if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z0-9]{5,10}$/.test(userVal)) {
-                if (userVal.length < 5) userError = 'Mínimo 5 caracteres.';
-                else if (userVal.length > 10) userError = 'Máximo 10 caracteres.';
-                else if (!/^[A-Za-z0-9]+$/.test(userVal)) userError = 'Solo letras y números permitidos.';
-                else if (!/[A-Z]/.test(userVal)) userError = 'Debe contener al menos una mayúscula.';
-                else if (!/[a-z]/.test(userVal)) userError = 'Debe contener al menos una minúscula.';
-                else if (!/\d/.test(userVal)) userError = 'Debe contener al menos un número.';
-                else userError = 'Usuario inválido.';
+            if (fechaVal === '') {
+                mostrarErrorReg('regFechaNac', 'La fecha de nacimiento es obligatoria.');
+                hayError = true;
+            } else if (!fechaValida) {
+                hayError = true;
             }
-            if (userError) mostrarErrorReg('regUser', userError);
-            else {
+
+            // ── Validar usuario (obligatorio) ──
+            var userVal = document.getElementById('regUser').value.trim();
+            if (userVal === '') {
+                mostrarErrorReg('regUser', 'El nombre de usuario es obligatorio.');
+                hayError = true;
+            } else if (!/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z0-9]{5,10}$/.test(userVal)) {
+                if (userVal.length < 5) mostrarErrorReg('regUser', 'Mínimo 5 caracteres.');
+                else if (userVal.length > 10) mostrarErrorReg('regUser', 'Máximo 10 caracteres.');
+                else if (!/^[A-Za-z0-9]+$/.test(userVal)) mostrarErrorReg('regUser', 'Solo letras y números permitidos.');
+                else if (!/[A-Z]/.test(userVal)) mostrarErrorReg('regUser', 'Debe contener al menos una mayúscula.');
+                else if (!/[a-z]/.test(userVal)) mostrarErrorReg('regUser', 'Debe contener al menos una minúscula.');
+                else if (!/\d/.test(userVal)) mostrarErrorReg('regUser', 'Debe contener al menos un número.');
+                else mostrarErrorReg('regUser', 'Usuario inválido.');
+                hayError = true;
+            } else {
                 mostrarExitoReg('regUser');
                 cerrarHintUser();
             }
 
-            // Validar teléfono
-            var telValido = validarTelRegistro();
-            if (regTelInput.value.replace(/\D/g, '').length === 0) {
+            // ── Validar teléfono (obligatorio) ──
+            var telValor = document.getElementById('regTel').value.replace(/\D/g, '');
+            if (telValor === '') {
                 mostrarErrorReg('regTel', 'El teléfono es obligatorio.');
-                telValido = false;
+                hayError = true;
+            } else {
+                var telValido = validarTelRegistro();
+                if (!telValido) hayError = true;
             }
 
-            // Validar email
+            // ── Validar email (obligatorio) ──
             var emailVal = document.getElementById('regEmail').value.trim();
-            if (emailVal === '') mostrarErrorReg('regEmail', 'Correo requerido.');
-            else {
-                var val = validarEmail(emailVal);
-                if (!val.ok) mostrarErrorReg('regEmail', val.msg);
-                else mostrarExitoReg('regEmail');
+            if (emailVal === '') {
+                mostrarErrorReg('regEmail', 'El correo electrónico es obligatorio.');
+                hayError = true;
+            } else {
+                var resultadoEmail = validarEmail(emailVal);
+                if (!resultadoEmail.ok) {
+                    mostrarErrorReg('regEmail', resultadoEmail.msg);
+                    hayError = true;
+                } else {
+                    mostrarExitoReg('regEmail');
+                }
             }
 
-            // Validar contraseña
-            var pass = document.getElementById('regPass');
-            var passVal = pass.value;
-            if (passVal.length === 0) mostrarErrorReg('regPass', 'Mínimo 8 caracteres.');
-            else {
+            // ── Validar contraseña (obligatorio) ──
+            var passVal = document.getElementById('regPass').value;
+            if (passVal === '') {
+                mostrarErrorReg('regPass', 'La contraseña es obligatoria.');
+                hayError = true;
+            } else {
                 var errorPass = validarPassword(passVal);
-                if (errorPass) mostrarErrorReg('regPass', errorPass);
-                else {
+                if (errorPass) {
+                    mostrarErrorReg('regPass', errorPass);
+                    hayError = true;
+                } else {
                     mostrarExitoReg('regPass');
                     cerrarHintPass();
                 }
             }
 
-            var passConfirm = document.getElementById('regPassConfirm');
-            if (passConfirm.value !== passVal) mostrarErrorReg('regPassConfirm', 'No coinciden.');
-            else if (passConfirm.value.length > 0) mostrarExitoReg('regPassConfirm');
+            // ── Validar confirmar contraseña (obligatorio) ──
+            var passConfirmVal = document.getElementById('regPassConfirm').value;
+            if (passConfirmVal === '') {
+                mostrarErrorReg('regPassConfirm', 'Debes confirmar la contraseña.');
+                hayError = true;
+            } else if (passConfirmVal !== passVal) {
+                mostrarErrorReg('regPassConfirm', 'Las contraseñas no coinciden.');
+                hayError = true;
+            } else {
+                mostrarExitoReg('regPassConfirm');
+            }
 
-            // Captcha
+            // ── Validar captcha ──
             if (!document.getElementById('robotCheck').checked) {
                 alert('Por favor confirma que no eres un robot.');
                 return;
             }
 
-            // Verificar errores generales
-            var hayErrores = document.querySelectorAll('#mainRegistro .campo-error').length > 0;
-            if (hayErrores || !telValido || !fechaValida || docError || userError) return;
+            // ── Si hay cualquier error, detener el envío ──
+            if (hayError) return;
 
-            // Registro exitoso
+            // ── Registro exitoso: cerrar panel y mostrar modal ──
             var panel = document.getElementById('registroContainer');
             var overlay = document.getElementById('offcanvasOverlayRegistro');
             if (panel && overlay) {
                 panel.classList.remove('show');
                 overlay.classList.remove('show');
-                document.body.classList.remove('no-scroll');
-                document.body.style.top = '';
-                window.scrollTo(0, scrollRegistroY);
                 limpiarTodo();
             }
             document.getElementById('modalRegistroExitoso').style.display = 'flex';
@@ -927,7 +1002,24 @@
             window.location.href = 'index.html';
         }
 
-        window.addEventListener('DOMContentLoaded', function() {
+        // ========== ASEGURAR QUE EL MENÚ LATERAL NO BLOQUEE EL SCROLL ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sobrescribir toggleOffcanvas para eliminar cualquier bloqueo de scroll
+            if (typeof toggleOffcanvas === 'function') {
+                var originalToggleOffcanvas = toggleOffcanvas;
+                toggleOffcanvas = function() {
+                    originalToggleOffcanvas();
+                    // Eliminar cualquier restricción de scroll que haya aplicado
+                    document.body.classList.remove('no-scroll');
+                    document.body.style.top = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
+                    document.body.style.height = '';
+                    document.body.style.overflow = '';
+                };
+            }
+
+            // Inicialización adicional
             limpiarTodo();
             configurarLimitesFecha();
         });

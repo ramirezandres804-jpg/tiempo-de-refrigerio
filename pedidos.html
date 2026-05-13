@@ -16,6 +16,13 @@
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
+        <!-- Botón de tema oscuro/claro -->
+<button class="theme-toggle-btn" 
+        id="themeToggle" 
+        data-tooltip="Modo oscuro" 
+        aria-label="Cambiar tema">
+    🌙
+</button>
     </header>
 
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
@@ -143,7 +150,7 @@
         </aside>
 
         <main class="content-center">
-            <h1 class="center-title">SOLICITA TU PEDIDO AQUÍ</h1>
+            <h1 class="center-title" style="color: #FF6600;">SOLICITA TU PEDIDO AQUÍ</h1>
             <p class="call-now">¡¡¡LLAMANOS YA!!!</p>
             <p class="center-subtitle">¿Antojado? No te quedes con las ganas. Pide ahora y te lo tenemos listo para que solo pases y recojas, o te lo enviamos si estás cerca.</p>
             
@@ -153,7 +160,7 @@
 
             <div class="linea-corporativa">
                 <h2 class="linea-title">Nuestra Línea Corporativa</h2>
-                <p style="color: #666; margin-bottom: 10px;">Escríbenos o llámanos al:</p>
+                <p style="color: #FF6600; margin-bottom: 10px;">Escríbenos o llámanos al:</p>
                 <a href="https://wa.me/573138205720" class="phone-badge" target="_blank">313 820 5720</a>
                 <br>
                 <a href="https://wa.me/573138205720" target="_blank" class="btn-solicitar">SOLICITAR PEDIDO AQUÍ 📲</a>

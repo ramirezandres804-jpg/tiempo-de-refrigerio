@@ -16,7 +16,7 @@
             background: linear-gradient(135deg, #fff8f0, #fff3e5, #fef0dd, #fff5ea);
             background-size: 400% 400%;
             animation: fondoMovimiento 15s ease infinite;
-            box-shadow: 0 16px 36px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0,0,0,0.02);
+            box-shadow: 0 16px 36px rgba(255, 138, 3, 0.06), 0 4px 12px rgba(0,0,0,0.02);
             border: 1px solid #fce4cc;
             margin-bottom: 20px; /* separación con el footer */
         }
@@ -82,7 +82,7 @@
             border: 2px solid #ffddb0;
             border-radius: 18px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 12px rgba(230, 8, 8, 0.02);
             transition: all 0.3s ease;
             position: relative;
             z-index: 1;
@@ -327,6 +327,13 @@
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
+        <!-- Botón de tema oscuro/claro -->
+<button class="theme-toggle-btn" 
+        id="themeToggle" 
+        data-tooltip="Modo oscuro" 
+        aria-label="Cambiar tema">
+    🌙
+</button>
     </header>
 
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
@@ -390,7 +397,7 @@
 
                 <div class="pago-wrapper-inner">
                     <div class="pago-header-ui">
-                        <h2 style="color: var(--dark); margin:0;">PAGO SEGURO</h2>
+                        <h2 style="color: #FF6600; margin:0;">PAGO SEGURO</h2>
                         <span class="badge-ssl">🔒 SSL 256-BIT ENCRYPTED</span>
                     </div>
 
@@ -411,7 +418,7 @@
                                             <span>📋</span> Productos seleccionados
                                         </div>
                                         <div id="detallePagoItems">
-                                            <p style="color: #b0a090; text-align:center; padding:16px 20px; font-style: italic; font-size: 13px;">Elige productos en el carrito para ver el detalle.</p>
+                                            <p style="color: #FF6600; text-align:center; padding:16px 20px; font-style: italic; font-size: 13px;">Elige productos en el carrito para ver el detalle.</p>
                                         </div>
                                         <div class="final-total">
                                             <span>TOTAL A PAGAR</span>
@@ -427,7 +434,7 @@
                                         <div class="payment-grid">
                                             <div class="payment-option" onclick="seleccionarPago(this, 'Digital')">
                                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                                    <span style="font-size: 20px;">📱</span><span>Transferencia Digital</span>
+                                                    <span style="font-size: 20px;">📱</span><span style="color: #ff6a00;">Transferencia Digital</span>
                                                 </div>
                                                 <div class="logos-wrapper">
                                                     <span class="payment-badge">
@@ -446,7 +453,7 @@
                                             </div>
                                             <div class="payment-option" onclick="seleccionarPago(this, 'Tarjeta')">
                                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                                    <span style="font-size: 20px;">💳</span><span>Tarjeta Débito / Crédito</span>
+                                                    <span style="font-size: 20px;">💳</span><span style="color: #ff6a00;">Tarjeta Débito / Crédito</span>
                                                 </div>
                                                 <div class="logos-wrapper">
                                                     <span class="payment-badge">
@@ -461,7 +468,7 @@
                                             </div>
                                             <div class="payment-option" onclick="seleccionarPago(this, 'Efectivo')">
                                                 <div style="display: flex; align-items: center; gap: 10px;">
-                                                    <span style="font-size: 20px;">💵</span><span>Efectivo contra entrega</span>
+                                                    <span style="font-size: 20px;">💵</span><span style="color: #ff6a00;">Efectivo contra entrega</span>
                                                 </div>
                                                 <div class="logos-wrapper">
                                                     <span class="payment-badge">
@@ -692,7 +699,7 @@
                 }
             }
             if (!hayProductos) {
-                document.getElementById('detallePagoItems').innerHTML = '<p style="color: #b0a090; text-align:center; padding:16px 20px; font-style: italic; font-size: 13px;">Elige productos en el carrito para ver el detalle.</p>';
+                document.getElementById('detallePagoItems').innerHTML = '<p style="color: #FF6600; text-align:center; padding:16px 20px; font-style: italic; font-size: 13px;">Elige productos en el carrito para ver el detalle.</p>';
             } else {
                 document.getElementById('detallePagoItems').innerHTML = detalleHTML;
             }

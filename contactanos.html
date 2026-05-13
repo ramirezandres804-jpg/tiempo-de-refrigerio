@@ -27,6 +27,36 @@
         .campo-ok {
             border: 2px solid #4caf50 !important;
         }
+
+        /* ==================== OFF‑CANVAS: TIPO DE DOCUMENTO EN MODO OSCURO ==================== */
+        [data-theme="dark"] #ctcTipoDoc {
+            color: #000 !important;
+        }
+
+        /* ==================== OFF‑CANVAS: NÚMERO DE DOCUMENTO EN MODO OSCURO ==================== */
+        [data-theme="dark"] #ctcNumDoc {
+            color: #ffffff !important;
+            background-color: #2a2a2a !important;
+        }
+        [data-theme="dark"] #ctcNumDoc::placeholder {
+            color: #999 !important;
+        }
+
+        /* ==================== REFUERZO TOTAL: TODOS LOS CAMPOS DEL FORMULARIO EN MODO OSCURO ==================== */
+        /* Garantiza que cualquier texto escrito sea visible (blanco sobre fondo oscuro) */
+        [data-theme="dark"] #formContactoPlegable input[type="text"],
+        [data-theme="dark"] #formContactoPlegable input[type="email"],
+        [data-theme="dark"] #formContactoPlegable input[type="password"],
+        [data-theme="dark"] #formContactoPlegable textarea,
+        [data-theme="dark"] #formContactoPlegable select {
+            color: #ffffff !important;
+            background-color: #2a2a2a !important;
+            border-color: #444 !important;
+        }
+        [data-theme="dark"] #formContactoPlegable input::placeholder,
+        [data-theme="dark"] #formContactoPlegable textarea::placeholder {
+            color: #999 !important;
+        }
     </style>
 </head>
 <body>
@@ -40,6 +70,13 @@
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
+        <!-- Botón de tema oscuro/claro -->
+<button class="theme-toggle-btn" 
+        id="themeToggle" 
+        data-tooltip="Modo oscuro" 
+        aria-label="Cambiar tema">
+    🌙
+</button>
     </header>
 
     <!-- OFFCANVAS MENÚ -->
@@ -158,7 +195,7 @@
         <main class="content-center">
             <h2 class="bienvenidos-titulo">CONTÁCTANOS CUANDO LO REQUIERAS</h2>
             <p style="font-size: 21px; font-weight: 700; color: var(--naranja-oscuro); margin-top: 6px; margin-bottom: 10px; letter-spacing: 0.8px;">¡HABLEMOS UN RATO!</p>
-            <p style="font-size: 15.5px; color: #444; line-height: 1.65; font-style: italic; margin-top: 0; font-weight: 400;">Hagamos de tu refrigerio una experiencia única y memorable. ¡Nuestra vendedora te espera con los sabores más auténticos y la atención personalizada que mereces!</p>
+            <p style="font-size: 15.5px; color: #e68d19; line-height: 1.65; font-style: italic; margin-top: 0; font-weight: 400;">Hagamos de tu refrigerio una experiencia única y memorable. ¡Nuestra vendedora te espera con los sabores más auténticos y la atención personalizada que mereces!</p>
             <div class="contacto-container-foto">
                 <img src="https://tiempoderefrigerio.joomla.com/images/contactanos11.jpg" alt="Contáctanos" class="foto-contacto">
                 <div class="info-rapida">
@@ -369,14 +406,33 @@
                     return;
                 }
             }
-            var valor = this.value;
+            var valor = this.value.trim();
             if (valor.length === 0) {
+                // Mientras escribe no mostramos error, solo limpiamos el estilo
                 this.classList.remove('campo-error', 'campo-ok');
                 document.getElementById('err_ctcNumDoc').classList.remove('show');
             } else if (valor.length < 5) {
                 mostrarError('ctcNumDoc', 'Mínimo 5 caracteres.');
             } else {
                 mostrarExito('ctcNumDoc');
+            }
+        });
+
+        // Nuevo: validación al perder el foco (muestra error si está vacío)
+        ctcNumDoc.addEventListener('blur', function() {
+            var tipo = ctcTipoDoc.value;
+            var valor = this.value.trim();
+            if (valor.length === 0) {
+                mostrarError('ctcNumDoc', 'Este campo es obligatorio.');
+            } else {
+                // Al salir del campo, si no está vacío, evaluamos si hay errores
+                if (tipo !== 'PA' && /[^0-9]/.test(valor)) {
+                    mostrarError('ctcNumDoc', 'Solo se permiten números para este tipo de documento.');
+                } else if (valor.length < 5) {
+                    mostrarError('ctcNumDoc', 'Mínimo 5 caracteres.');
+                } else {
+                    mostrarExito('ctcNumDoc');
+                }
             }
         });
 
@@ -478,21 +534,23 @@
                 mostrarExito('ctcNombre');
             }
 
-            // Validar documento
+            // Validar documento (ahora obligatorio)
             var tipoDoc = ctcTipoDoc.value;
             var numDoc = ctcNumDoc.value.trim();
             var docError = false;
             if (numDoc.length === 0) {
                 mostrarError('ctcNumDoc', 'El número de documento es obligatorio.');
                 docError = true;
-            } else if (tipoDoc !== 'PA' && /[^0-9]/.test(numDoc)) {
-                mostrarError('ctcNumDoc', 'Solo se permiten números para este tipo de documento.');
-                docError = true;
-            } else if (numDoc.length < 5) {
-                mostrarError('ctcNumDoc', 'Mínimo 5 caracteres.');
-                docError = true;
             } else {
-                mostrarExito('ctcNumDoc');
+                if (tipoDoc !== 'PA' && /[^0-9]/.test(numDoc)) {
+                    mostrarError('ctcNumDoc', 'Solo se permiten números para este tipo de documento.');
+                    docError = true;
+                } else if (numDoc.length < 5) {
+                    mostrarError('ctcNumDoc', 'Mínimo 5 caracteres.');
+                    docError = true;
+                } else {
+                    mostrarExito('ctcNumDoc');
+                }
             }
 
             // Teléfono
