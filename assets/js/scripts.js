@@ -930,6 +930,54 @@ function inyectarBotonAsesorVIP() {
 // ── FIN BOTÓN ASESOR VIP ───────────────────────────────────────
 
 // ============================================================
+// 🔥 NUEVO: RESTAURAR INTERACTIVIDAD DE ELEMENTOS BLOQUEADOS POR CSS
+// ============================================================
+function restaurarInteractividad() {
+    // 1. Logo de Tiempo de Refrigerio (redirige al inicio)
+    const logo = document.querySelector('.logo-container');
+    if (logo) {
+        logo.style.pointerEvents = 'auto';
+        // Asegurar que tenga href correcto
+        logo.setAttribute('href', 'index.html');
+        // Por si acaso, añadir listener para forzar navegación
+        logo.addEventListener('click', function(e) {
+            // Si ya tiene href, el navegador lo manejará normalmente,
+            // pero lo reforzamos para evitar cualquier bloqueo residual.
+            window.location.href = 'index.html';
+            e.preventDefault(); // Prevenir comportamiento por defecto solo si usamos window.location
+        });
+    }
+
+    // 2. Enlace "Regístrate" (último de .login-links)
+    const enlaceRegistro = document.querySelector('.login-links a:last-child');
+    if (enlaceRegistro) {
+        enlaceRegistro.style.pointerEvents = 'auto';
+        // Asegurar que redirija a registrate.html
+        enlaceRegistro.setAttribute('href', 'registrate.html');
+        enlaceRegistro.addEventListener('click', function(e) {
+            window.location.href = 'registrate.html';
+            e.preventDefault();
+        });
+    }
+
+    // 3. Redes sociales (todos los enlaces dentro de .social-icons)
+    const iconosSociales = document.querySelectorAll('.social-icons a');
+    iconosSociales.forEach(link => {
+        link.style.pointerEvents = 'auto';
+    });
+    // Re-aplicar configuración de redes sociales por si acaso
+    configurarRedesSociales();
+
+    // 4. Mapa (iframe)
+    const mapaIframe = document.querySelector('.map-container iframe');
+    if (mapaIframe) {
+        mapaIframe.style.pointerEvents = 'auto';
+    }
+    // Re-enlazar mapa real
+    enlazarMapaReal();
+}
+
+// ============================================================
 // INICIALIZACIÓN COMÚN
 // ============================================================
 document.addEventListener('DOMContentLoaded', function() {
@@ -1013,4 +1061,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ✅ Inyectar botón Asesor VIP (complemento no invasivo)
     inyectarBotonAsesorVIP();
+
+    // 🔥 RESTAURAR INTERACTIVIDAD DE LOS 4 ELEMENTOS BLOQUEADOS POR CSS
+    restaurarInteractividad();
 });

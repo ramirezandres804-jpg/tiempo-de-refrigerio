@@ -385,11 +385,21 @@
                 if (footer) footer.style.display = 'none';
                 var body = document.getElementById('chatBody');
                 if (body) body.innerHTML = '';
+                // Limpiar input al abrir, por seguridad
+                var input = document.getElementById('chatInput');
+                if (input) input.value = '';
                 // No se bloquea el scroll del body
             } else {
-                // Al cerrar, limpiar el área de mensajes
+                // Al cerrar, limpiar todo para un nuevo proceso
                 var body = document.getElementById('chatBody');
                 if (body) body.innerHTML = '';
+                var input = document.getElementById('chatInput');
+                if (input) input.value = '';
+                // Restablecer estado visual: menú de opciones visible, footer oculto
+                var options = document.getElementById('chatOptions');
+                var footer = document.getElementById('chatFooter');
+                if (options) options.style.display = 'flex';
+                if (footer) footer.style.display = 'none';
             }
         }
 
@@ -444,6 +454,15 @@
         }
 
         function volverAlMenu() {
+            // Limpiar toda la conversación anterior
+            var body = document.getElementById('chatBody');
+            if (body) body.innerHTML = '';
+
+            // Limpiar el campo de texto del chat
+            var input = document.getElementById('chatInput');
+            if (input) input.value = '';
+
+            // Ocultar el footer del chat y mostrar el menú de opciones
             var footer = document.getElementById('chatFooter');
             var options = document.getElementById('chatOptions');
             if (footer) footer.style.display = 'none';

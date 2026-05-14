@@ -2945,3 +2945,15 @@ body {
     border-color: rgba(0, 0, 0, 0.1);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
+
+/* ============================================================
+   SOLO AJUSTE SOLICITADO: DESHABILITAR FUNCIONALIDAD JS
+   EN "REGÍSTRATE", REDES SOCIALES, MAPA Y LOGO
+   (Conservan sus estilos, pero no ejecutan scripts globales)
+   ============================================================ */
+.login-links a:last-child,       /* Enlace "Regístrate" */
+.social-icons a,                /* Todos los iconos de redes sociales */
+.map-container iframe,          /* Mapa incrustado */
+.logo-container {               /* Logo de Tiempo de Refrigerio */
+    pointer-events: none;       /* Evita cualquier interacción sin cambiar el CSS visual */
+}
