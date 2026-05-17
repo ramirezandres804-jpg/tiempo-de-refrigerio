@@ -22,7 +22,7 @@
             left: 0;
             width: 100%;
             height: 120%;
-            background-image: url('https://tiempoderefrigerio.joomla.com/images/headers/34437eda-f8e7-4508-85b4-fa43f33c85e5.png?1773418098000');
+            background-image: url('assets/images/productos.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -184,25 +184,20 @@
     <header class="header-top">
         <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
         <a href="index.html" class="logo-container">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+            <img src="assets/images/logotipo.jpg" alt="Logo Tiempo de Refrigerio">
         </a>
         <div class="search-box">
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
         <!-- Botón de tema oscuro/claro -->
-<button class="theme-toggle-btn" 
-        id="themeToggle" 
-        data-tooltip="Modo oscuro" 
-        aria-label="Cambiar tema">
-    🌙
-</button>
+        <button class="theme-toggle-btn" id="themeToggle" data-tooltip="Modo oscuro" aria-label="Cambiar tema">🌙</button>
     </header>
 
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
     <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
         <div class="offcanvas-header">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <img src="assets/images/logotipo.jpg" alt="Logo">
             <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
         </div>
         <div class="offcanvas-body">
@@ -420,7 +415,7 @@
     </div>
     <div class="modal-overlay" id="modalRegistroExitoso">
         <div class="modal-box modal-registro-exitoso">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo" style="background-color: var(--naranja);">
+            <img src="assets/images/logotipo.jpg" alt="Logo" style="background-color: var(--naranja);">
             <h2>¡REGISTRO EXITOSO!</h2>
             <p>Tu cuenta ha sido creada correctamente. Prepárate para disfrutar de los mejores sabores.</p>
             <button class="btn-exito" onclick="finalizarTodo()">¡EXCELENTE!</button>

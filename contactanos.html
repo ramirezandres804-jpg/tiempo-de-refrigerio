@@ -43,7 +43,6 @@
         }
 
         /* ==================== REFUERZO TOTAL: TODOS LOS CAMPOS DEL FORMULARIO EN MODO OSCURO ==================== */
-        /* Garantiza que cualquier texto escrito sea visible (blanco sobre fondo oscuro) */
         [data-theme="dark"] #formContactoPlegable input[type="text"],
         [data-theme="dark"] #formContactoPlegable input[type="email"],
         [data-theme="dark"] #formContactoPlegable input[type="password"],
@@ -57,6 +56,38 @@
         [data-theme="dark"] #formContactoPlegable textarea::placeholder {
             color: #999 !important;
         }
+
+        /* ==================== IMAGEN FLOTANTE AL LADO DE LOS DATOS ==================== */
+        .imagen-contacto-flotante {
+            width: 180px;               /* Ajusta el tamaño según necesites */
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            /* Animación diagonal con zoom sutil */
+            animation: moverFondoContacto 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes moverFondoContacto {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                transform: translate(-5%, -3%) scale(1.03);
+            }
+            100% {
+                transform: translate(2%, 2%) scale(1.01);
+            }
+        }
+
+        /* Contenedor flex para alinear la imagen a la izquierda y los datos a la derecha */
+        .contacto-flex-container {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -64,26 +95,26 @@
     <header class="header-top">
         <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
         <a href="index.html" class="logo-container">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+            <img src="assets/images/logotipo.jpg" alt="Logo Tiempo de Refrigerio">
         </a>
         <div class="search-box">
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
         <!-- Botón de tema oscuro/claro -->
-<button class="theme-toggle-btn" 
-        id="themeToggle" 
-        data-tooltip="Modo oscuro" 
-        aria-label="Cambiar tema">
-    🌙
-</button>
+        <button class="theme-toggle-btn" 
+                id="themeToggle" 
+                data-tooltip="Modo oscuro" 
+                aria-label="Cambiar tema">
+            🌙
+        </button>
     </header>
 
     <!-- OFFCANVAS MENÚ -->
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
     <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
         <div class="offcanvas-header">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <img src="assets/images/logotipo.jpg" alt="Logo">
             <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
         </div>
         <div class="offcanvas-body">
@@ -196,14 +227,17 @@
             <h2 class="bienvenidos-titulo">CONTÁCTANOS CUANDO LO REQUIERAS</h2>
             <p style="font-size: 21px; font-weight: 700; color: var(--naranja-oscuro); margin-top: 6px; margin-bottom: 10px; letter-spacing: 0.8px;">¡HABLEMOS UN RATO!</p>
             <p style="font-size: 15.5px; color: #e68d19; line-height: 1.65; font-style: italic; margin-top: 0; font-weight: 400;">Hagamos de tu refrigerio una experiencia única y memorable. ¡Nuestra vendedora te espera con los sabores más auténticos y la atención personalizada que mereces!</p>
-            <div class="contacto-container-foto">
-                <img src="https://tiempoderefrigerio.joomla.com/images/contactanos11.jpg" alt="Contáctanos" class="foto-contacto">
+
+            <!-- NUEVA ESTRUCTURA: Imagen flotante a la izquierda + datos a la derecha -->
+            <div class="contacto-flex-container">
+                <img src="assets/images/contacto.jpg" alt="Contáctanos" class="imagen-contacto-flotante">
                 <div class="info-rapida">
                     <div class="info-box-item"><strong>📞 LLÁMANOS</strong>313 820 5720</div>
                     <div class="info-box-item"><strong>✅ CORREO</strong>contacto@tiempoderefrigerio.com</div>
                     <div class="info-box-item"><strong>📍 UBICACIÓN</strong>Bosa, Bogotá - Colombia</div>
                 </div>
             </div>
+
             <button class="btn-plegar-contacto" onclick="toggleFormulario()">
                 <span>ESCRÍBENOS UN MENSAJE DIRECTO</span>
                 <span id="flechaForm">▼</span>

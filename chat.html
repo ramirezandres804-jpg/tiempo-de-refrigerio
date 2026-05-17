@@ -20,7 +20,7 @@
             left: 0;
             width: 100%;
             height: 120%;
-            background-image: url('https://tiempoderefrigerio.joomla.com/images/headers/PORTADA.png?1773187771000');
+            background-image: url('assets/images/imagenchat.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -271,26 +271,21 @@
     <header class="header-top">
         <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
         <a href="index.html" class="logo-container">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+            <img src="assets/images/logotipo.jpg" alt="Logo Tiempo de Refrigerio">
         </a>
         <div class="search-box">
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
         <!-- Botón de tema oscuro/claro -->
-<button class="theme-toggle-btn" 
-        id="themeToggle" 
-        data-tooltip="Modo oscuro" 
-        aria-label="Cambiar tema">
-    🌙
-</button>
+        <button class="theme-toggle-btn" id="themeToggle" data-tooltip="Modo oscuro" aria-label="Cambiar tema">🌙</button>
     </header>
 
     <!-- OFFCANVAS MENÚ -->
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
     <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
         <div class="offcanvas-header">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <img src="assets/images/logotipo.jpg" alt="Logo">
             <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
         </div>
         <div class="offcanvas-body">
@@ -538,7 +533,9 @@
             var msg = mensaje.toLowerCase();
             if (msg.includes('menú') || msg.includes('menu')) return 'Tenemos empanadas, buñuelos, arepas, pasteles, yuca, avena, tinto y mucho más. ¿Deseas ver la carta completa? 📋';
             if (msg.includes('pedido')) return 'Puedes hacer tu pedido ahora mismo y lo alistamos rapidísimo. 🛒 ¿Qué se te antoja?';
-            if (msg.includes('horario')) return 'Atendemos de lunes a viernes de 6:30 a. m. a 8:00 p. m. y sábados y domingos Eventos & Buffet. ⏰';            if (msg.includes('ubicación') || msg.includes('ubicacion')) return 'Estamos en CL 56 G #90B 59 Sur, Bosa, Bogotá. ¡Te esperamos! 📍';
+            if (msg.includes('horario')) return 'Atendemos de lunes a viernes de 6:30 a. m. a 8:00 p. m. y sábados y domingos Eventos & Buffet. ⏰';
+            if (msg.includes('precio')) return 'Nuestros precios son justos y  de alta calidad . ¿Te gustaría pedir algo? 💰';
+            if (msg.includes('ubicación') || msg.includes('ubicacion')) return 'Estamos en CL 56 G #90B 59 Sur, Bosa, Bogotá. ¡Te esperamos! 📍';
             return 'Gracias por escribirnos. 🙏 Pronto un asesor tomará el control de esta conversación. Mientras tanto, dime qué necesitas y te echo una mano.';
         }
 

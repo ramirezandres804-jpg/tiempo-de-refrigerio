@@ -336,23 +336,21 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(255,101,0,0.4);
-            transition: transform 0.3s, box-shadow 0.3s, background 0.3s; /* Se añade background a la transición */
+            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
             display: inline-block;
             text-decoration: none;
         }
 
-        /* ✅ NUEVO: Cambio de color al pasar el cursor */
         .btn-desplegar-horarios:hover {
             transform: translateY(-3px);
             box-shadow: 0 12px 25px rgba(255,101,0,0.6);
-            background: linear-gradient(135deg, #ffa500, #ff7f00); /* Naranja más brillante */
+            background: linear-gradient(135deg, #ffa500, #ff7f00);
         }
 
-        /* ✅ NUEVO: Cambio de color al hacer clic (active) */
         .btn-desplegar-horarios:active {
             transform: translateY(0px);
             box-shadow: 0 4px 10px rgba(255,101,0,0.5);
-            background: linear-gradient(135deg, #ff7f00, #e65c00); /* Más oscuro al presionar */
+            background: linear-gradient(135deg, #ff7f00, #e65c00);
         }
     </style>
 </head>
@@ -360,25 +358,25 @@
     <header class="header-top">
         <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
         <a href="index.html" class="logo-container">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+            <img src="assets/images/logotipo.jpg" alt="Logo Tiempo de Refrigerio">
         </a>
         <div class="search-box">
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
         <!-- Botón de tema oscuro/claro -->
-<button class="theme-toggle-btn" 
-        id="themeToggle" 
-        data-tooltip="Modo oscuro" 
-        aria-label="Cambiar tema">
-    🌙
-</button>
+        <button class="theme-toggle-btn" 
+                id="themeToggle" 
+                data-tooltip="Modo oscuro" 
+                aria-label="Cambiar tema">
+            🌙
+        </button>
     </header>
 
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
     <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
         <div class="offcanvas-header">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <img src="assets/images/logotipo.jpg" alt="Logo">
             <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
         </div>
         <div class="offcanvas-body">
@@ -607,4 +605,4 @@
         })();
     </script>
 </body>
-</html> 
+</html>

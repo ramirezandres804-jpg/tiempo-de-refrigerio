@@ -5,32 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio | Tiempo de Refrigerio</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
+    
+    <!-- ===== ESTILOS DIRECTOS PARA LA ANIMACIÓN ===== -->
+    <style>
+        @keyframes floatVertical {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-10px); }
+        }
+
+        .imagen-flotante {
+            display: block;
+            margin: 30px auto;          /* centrado horizontal */
+            max-width: 300px;           /* tamaño visible, cámbialo si quieres */
+            height: auto;
+            animation: floatVertical 3s ease-in-out infinite;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .imagen-flotante:hover {
+            animation-play-state: paused;
+            transform: scale(1.03);
+        }
+    </style>
 </head>
 <body>
     <!-- HEADER -->
     <header class="header-top">
         <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
         <a href="index.html" class="logo-container">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+            <img src="assets/images/logotipo.jpg" alt="Logo Tiempo de Refrigerio">
         </a>
         <div class="search-box">
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
-        <!-- Botón de tema oscuro/claro -->
-<button class="theme-toggle-btn" 
-        id="themeToggle" 
-        data-tooltip="Modo oscuro" 
-        aria-label="Cambiar tema">
-    🌙
-</button>
+        <button class="theme-toggle-btn" id="themeToggle" data-tooltip="Modo oscuro" aria-label="Cambiar tema">🌙</button>
     </header>
 
     <!-- OFFCANVAS -->
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
     <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
         <div class="offcanvas-header">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <img src="assets/images/logotipo.jpg" alt="Logo">
             <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
         </div>
         <div class="offcanvas-body">
@@ -73,7 +91,10 @@
                 Aquí, el antojo se convierte en pausa, y la pausa en disfrute. Ven y saborea nuestras delicias...
                 ten un encuentro sencillo, auténtico y lleno de <span style="color:var(--naranja); font-weight:bold;">sabor colombiano</span>.
             </p>
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO%20%202.jpeg" alt="Menú Tiempo de Refrigerio" class="banner-menu">
+
+            <!-- 🔥 IMAGEN CENTRADA CON MOVIMIENTO FLOTANTE 🔥 -->
+            <img src="assets/images/logo.jpg" alt="Logo Tiempo de Refrigerio" class="imagen-flotante">
+
             <div style="margin-top: 20px;">
                 <a href="https://www.youtube.com/shorts/StmLfrpYxnY" target="_blank" class="tagline-footer">
                     EMPANADAS CON LA RECETA TRADICIONAL DE LA "ABUELA"

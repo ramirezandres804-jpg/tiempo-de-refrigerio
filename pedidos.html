@@ -5,30 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pedidos | Tiempo de Refrigerio</title>
     <link rel="stylesheet" href="assets/css/estilos.css">
+
+    <!-- ===== ANIMACIÓN FLOTANTE PARA LA IMAGEN CENTRAL ===== -->
+    <style>
+        @keyframes floatVertical {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-10px); }
+        }
+
+        .imagen-flotante {
+            display: block;
+            margin: 30px auto;
+            max-width: 300px;          /* ajusta según tu imagen */
+            height: auto;
+            animation: floatVertical 3s ease-in-out infinite;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .imagen-flotante:hover {
+            animation-play-state: paused;
+            transform: scale(1.03);
+        }
+    </style>
 </head>
 <body>
     <header class="header-top">
         <button class="btn-menu" aria-label="Abrir menú" onclick="toggleOffcanvas()">☰</button>
         <a href="index.html" class="logo-container">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo Tiempo de Refrigerio">
+            <img src="assets/images/logotipo.jpg" alt="Logo Tiempo de Refrigerio">
         </a>
         <div class="search-box">
             <input type="text" id="buscadorPrincipal" placeholder="¿Qué estás buscando para comer hoy?" onkeypress="if(event.key === 'Enter') buscarSitio()">
             <button onclick="buscarSitio()">🔍 Buscar</button>
         </div>
         <!-- Botón de tema oscuro/claro -->
-<button class="theme-toggle-btn" 
-        id="themeToggle" 
-        data-tooltip="Modo oscuro" 
-        aria-label="Cambiar tema">
-    🌙
-</button>
+        <button class="theme-toggle-btn" id="themeToggle" data-tooltip="Modo oscuro" aria-label="Cambiar tema">🌙</button>
     </header>
 
     <div class="offcanvas-overlay" id="offcanvasOverlay" onclick="toggleOffcanvas()"></div>
     <div class="offcanvas" id="offcanvasMenu" aria-hidden="true">
         <div class="offcanvas-header">
-            <img src="https://tiempoderefrigerio.joomla.com/images/headers/LOGOTIPO.jpeg" alt="Logo">
+            <img src="assets/images/logotipo.jpg" alt="Logo">
             <button class="offcanvas-close" onclick="toggleOffcanvas()">✕</button>
         </div>
         <div class="offcanvas-body">
@@ -52,7 +71,6 @@
             <div class="side-cart">
                 <div class="cart-header">🛒 RESUMEN DE TU PEDIDO</div>
                 <div class="cart-items">
-                    <!-- Productos con los IDs correctos para el JS -->
                     <div class="cart-item">
                         <div class="item-info">
                             <p class="item-name">Empanada (Carne/Pollo)</p>
@@ -154,8 +172,9 @@
             <p class="call-now">¡¡¡LLAMANOS YA!!!</p>
             <p class="center-subtitle">¿Antojado? No te quedes con las ganas. Pide ahora y te lo tenemos listo para que solo pases y recojas, o te lo enviamos si estás cerca.</p>
             
+            <!-- 🔥 IMAGEN CENTRAL CON MOVIMIENTO FLOTANTE 🔥 -->
             <div class="hero-img-box">
-                <img src="https://tiempoderefrigerio.joomla.com/images/headers/Gemini_Generated_Image_9lxcxe9lxcxe9lxc.png?1773253648000" alt="Servicio a Domicilio Tiempo de Refrigerio" class="moto-img">
+                <img src="assets/images/pedidos.png" alt="Pedidos Tiempo de Refrigerio" class="imagen-flotante">
             </div>
 
             <div class="linea-corporativa">
@@ -272,7 +291,7 @@
     </footer>
 
     <script src="assets/js/scripts.js"></script>
-    <!-- Lógica del carrito (idéntica a menu.html) -->
+    <!-- Lógica del carrito -->
     <script>
         const precios = {
             'Empanadas': 3000,
