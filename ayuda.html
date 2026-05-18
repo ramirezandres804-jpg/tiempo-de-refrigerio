@@ -148,6 +148,32 @@
         .chat-footer {
             flex-shrink: 0;   /* nunca se comprimen */
         }
+
+        /* ═══════════════════════════════════════════════════════
+           CORRECCIÓN VISUAL PARA EL BOTÓN "ENVIAR" EN MÓVILES
+           (evita que se corte y garantiza que se vea completo)
+           ═══════════════════════════════════════════════════════ */
+        .chat-footer {
+            padding: 16px 20px 22px 20px;   /* más respiro inferior */
+            background: white;               /* asegura que no sea transparente */
+            border-top: 2px solid #ffe0b2;
+        }
+
+        .footer-inputs button {
+            /* refuerzo para que el botón nunca sea más pequeño que su texto */
+            white-space: nowrap;
+            overflow: visible;
+            text-overflow: clip;
+        }
+
+        @media (max-width: 600px) {
+            .chat-footer {
+                padding: 14px 14px 24px 14px;
+            }
+            .footer-inputs button {
+                min-width: 70px;            /* ancho mínimo para que "Enviar ➔" quepa */
+            }
+        }
     </style>
 </head>
 <body>
