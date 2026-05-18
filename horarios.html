@@ -217,6 +217,26 @@
             .map-container {
                 height: 200px;
             }
+
+            /* ═══════════════════════════════════════════════════════
+               CORRECCIÓN VISUAL PARA EL BOTÓN EN MÓVILES
+               (evita que quede oculto sin necesidad de zoom)
+               ═══════════════════════════════════════════════════════ */
+            .horarios-container {
+                height: 100dvh;          /* usa la altura real del viewport en móviles */
+                max-height: 100dvh;
+            }
+
+            .horarios-body {
+                padding-bottom: 90px;    /* espacio extra para que el botón se vea completo */
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .btn-pedidos-call {
+                margin-bottom: 25px;
+                display: inline-block;   /* conserva el diseño y añade margen inferior */
+            }
         }
 
         @media (max-width: 480px) {
@@ -249,6 +269,14 @@
             /* Offcanvas */
             .offcanvas {
                 width: min(85vw, 280px);
+            }
+
+            /* Refuerzo para el botón en pantallas muy pequeñas */
+            .horarios-body {
+                padding-bottom: 100px;
+            }
+            .btn-pedidos-call {
+                margin-bottom: 30px;
             }
         }
 
@@ -403,7 +431,7 @@
             <span onclick="toggleHorarios()" style="cursor:pointer; font-size:32px; line-height:1;">✕</span>
         </div>
         <div class="horarios-body">
-            <p style="text-align:center; font-size:18px; color:#555; margin-bottom:35px;">
+            <p style="text-align:center; font-size:18px; color:lab(73.54% 21.69 76.64); margin-bottom:35px;">
                 ¡Estamos listos para atenderte! Consulta nuestros horarios y programa tu delicia hoy mismo.
             </p>
 
