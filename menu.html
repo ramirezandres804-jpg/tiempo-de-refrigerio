@@ -294,7 +294,7 @@
                 <!-- Imagen principal con flechas -->
                 <div class="galeria-principal">
                     <button class="galeria-flecha izq" onclick="cambiarImagen(-1)">❮</button>
-                    <img id="imgPrincipal" src="https://mejorconsalud.as.com/wp-content/uploads/2015/06/empanadas.jpg" alt="Producto principal">
+                    <img id="imgPrincipal" src="assets/images/empanadas.jpg" alt="Producto principal">
                     <button class="galeria-flecha der" onclick="cambiarImagen(1)">❱</button>
                 </div>
 
@@ -429,14 +429,14 @@
     <script>
         // ====== DATOS DE LA GALERÍA ======
         const productos = [
-            { img: "https://mejorconsalud.as.com/wp-content/uploads/2015/06/empanadas.jpg", nombre: "Empanadas (Carne / Pollo)", precio: "$3.000" },
-            { img: "https://i.pinimg.com/736x/06/31/82/0631828474525674cae737cbe9df156b.jpg", nombre: "Arepa de huevo", precio: "$4.000" },
-            { img: "https://www.infobae.com/new-resizer/3-uM29yTrwvJaApFncpmU5-NaaY=/arc-anglerfish-arc2-prod-infobae/public/ETJX756P3BD5VJSBJEQW3V76BM.jpg", nombre: "Pasteles de Yuca", precio: "$3.500" },
-            { img: "https://www.elespectador.com/resizer/_gDNmkhwU9H4FN0WPw7NIz8dvhs=/arc-anglerfish-arc2-prod-elespectador/public/DLEQPHYNTZFGVEPDJ2VQDANSDI.jpg", nombre: "Buñuelos", precio: "$2.000" },
-            { img: "https://www.unacolombianaencalifornia.com/wp-content/uploads/2015/12/Avena-Cubana-receta-Colombia-e1449509653549-900x600.jpg", nombre: "Avena Helada", precio: "$4.500" },
-            { img: "https://apasionadosporelcafe.com/wp-content/uploads/2016/11/bg-thumbmail-campesino.png", nombre: "Tinto / Perico", precio: "$2.000" },
-            { img: "https://mistiendas.com.co/961-large_default/gaseosa-pool-x-12-un-x250-gr.jpg", nombre: "Gaseosas", precio: "$3.000" },
-            { img: "https://img.youtube.com/vi/b3SH_Kr_UDc/hqdefault.jpg", nombre: "Combo: Empanada + Avena Helada", precio: "$6.000" }
+            { img: "assets/images/empanadas.jpg",              nombre: "Empanadas (Carne / Pollo)",      precio: "$3.000" },
+            { img: "assets/images/arepa_de_huevo.jpg",         nombre: "Arepa de Huevo",                  precio: "$4.000" },
+            { img: "assets/images/pastel_de_yuca.jpg",         nombre: "Pasteles de Yuca",                precio: "$3.500" },
+            { img: "assets/images/buñuelos.png",               nombre: "Buñuelos",                        precio: "$2.000" },
+            { img: "assets/images/avena.jpg",                  nombre: "Avena Helada",                    precio: "$4.500" },
+            { img: "assets/images/tinto_perico.png",           nombre: "Tinto / Perico",                  precio: "$2.000" },
+            { img: "assets/images/gaseosas.jpg",               nombre: "Gaseosas",                        precio: "$3.000" },
+            { img: "assets/images/combo.jpg",  nombre: "Combo: Empanada + Avena Helada",  precio: "$6.000" }
         ];
 
         let indiceActual = 0;
